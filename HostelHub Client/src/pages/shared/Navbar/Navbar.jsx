@@ -40,3 +40,58 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+// // components/Navbar.jsx
+// const Navbar = () => {
+//     const [isOpen, setIsOpen] = useState(false);
+  
+//     return (
+//       <nav className="bg-white shadow-sm sticky top-0 z-40">
+//         <div className="container mx-auto px-4">
+//           <div className="flex justify-between items-center h-16">
+//             {/* Logo */}
+//             <div className="flex-shrink-0">
+//               <img src="/logo.png" alt="Logo" className="h-8" />
+//             </div>
+            
+//             {/* Desktop Navigation */}
+//             <div className="hidden md:flex space-x-8">
+//               <NavLink to="/">Home</NavLink>
+//               <NavLink to="/meals">Meals</NavLink>
+//               <NavLink to="/facilities">Facilities</NavLink>
+//               <NavLink to="/contact">Contact</NavLink>
+//             </div>
+            
+//             {/* Mobile Menu Button */}
+//             <div className="md:hidden">
+//               <button 
+//                 onClick={() => setIsOpen(!isOpen)}
+//                 className="text-gray-500 hover:text-gray-900"
+//               >
+//                 <MenuIcon className="h-6 w-6" />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+        
+//         {/* Mobile Menu */}
+//         <AnimatePresence>
+//           {isOpen && (
+//             <motion.div
+//               initial={{ opacity: 0, height: 0 }}
+//               animate={{ opacity: 1, height: 'auto' }}
+//               exit={{ opacity: 0, height: 0 }}
+//               className="md:hidden overflow-hidden"
+//             >
+//               <div className="px-4 pb-4 space-y-2">
+//                 <MobileNavLink to="/">Home</MobileNavLink>
+//                 <MobileNavLink to="/meals">Meals</MobileNavLink>
+//                 <MobileNavLink to="/facilities">Facilities</MobileNavLink>
+//                 <MobileNavLink to="/contact">Contact</MobileNavLink>
+//               </div>
+//             </motion.div>
+//           )}
+//         </AnimatePresence>
+//       </nav>
+//     );
+//   };
