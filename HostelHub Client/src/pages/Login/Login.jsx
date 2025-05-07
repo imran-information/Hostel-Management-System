@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 // Validation schema
 const loginSchema = yup.object().shape({
@@ -23,7 +23,8 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
-    const { loginUser, loading } = useAuth();
+    const { loginUser, googleSignInUser } = useAuth();
+    const navigate = useNavigate()
 
     const {
         register,
@@ -44,7 +45,7 @@ const Login = () => {
         try {
             const result = await loginUser(email, password);
             console.log('Logged in user:', result.user);
-
+            navigate('/')
         } catch (error) {
             setLoginError('Login failed. Please try again.');
             console.error('Login error:', error);
@@ -59,29 +60,23 @@ const Login = () => {
     };
 
     const handleGoogleLogin = async () => {
-        // try {
-        //     setIsLoading(true);
-        //     setLoginError('');
-
-        //     const provider = new GoogleAuthProvider();
-        //     const result = await signInWithPopup(auth, provider);
-
-        //     // This gives you a Google Access Token and user info
-        //     const credential = GoogleAuthProvider.credentialFromResult(result);
-        //     const token = credential.accessToken;
-        //     const user = result.user;
-
-        //     console.log('Google login successful', user);
-        //     // Redirect or handle successful login
-        //     // router.push('/dashboard');
-        // } catch (error) {
-        //     const errorCode = error.code;
-        //     const errorMessage = error.message;
-        //     setLoginError(errorMessage);
-        //     console.error('Google login error:', errorCode, errorMessage);
-        // } finally {
-        //     setIsLoading(false);
-        // }
+        try {
+            setIsLoading(true);
+            setLoginError('');
+            await googleSignInUser()
+                .then(result => {
+                    console.log('Google login successful', result.user);
+                })
+            // Redirect or handle successful login 
+            navigate('/')
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setLoginError(errorMessage);
+            console.error('Google login error:', errorCode, errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

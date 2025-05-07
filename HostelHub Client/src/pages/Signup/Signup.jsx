@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { Link } from 'react-router';
+import { Eye, EyeOff, Loader2, Router } from 'lucide-react';
+import { Link, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 
 // Validation schema
@@ -29,7 +29,9 @@ const Signup = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [signupError, setSignupError] = useState('');
-    const { createUser, loading, updateProfile, user } = useAuth();
+    const navigate = useNavigate()
+    const { createUser, updateProfileUser, user, googleSignInUser } = useAuth();
+
 
     const {
         register,
@@ -50,10 +52,8 @@ const Signup = () => {
         try {
             await createUser(email, password);
             console.log('Login data:', data);
-            // You can update the user profile with their name here
-            // await updateProfile(user, {
-            //     displayName: name
-            // });
+            // update the user profile with their name here
+            await updateProfileUser(name);
 
             console.log('Signup successful', user);
             reset();
@@ -68,22 +68,21 @@ const Signup = () => {
     };
 
     const handleGoogleSignup = async () => {
-        // try {
-        //     setIsLoading(true);
-        //     setSignupError('');
-
-        //     const provider = new GoogleAuthProvider();
-        //     const result = await signInWithPopup(auth, provider);
-
-        //     console.log('Google signup successful', result.user);
-        //     // Redirect to dashboard
-        //     // router.push('/dashboard');
-        // } catch (error) {
-        //     setSignupError(error.message);
-        //     console.error('Google signup error:', error);
-        // } finally {
-        //     setIsLoading(false);
-        // }
+        try {
+            setIsLoading(true);
+            setSignupError('');
+            await googleSignInUser()
+                .then(result => {
+                    console.log('Google signup successful', result.user);
+                    navigate('/');
+                })
+            // Redirect or handle successful login  
+        } catch (error) {
+            setSignupError(error.message);
+            console.error('Google signup error:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const togglePasswordVisibility = (field) => {
