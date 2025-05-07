@@ -6,7 +6,7 @@ import MealCard from './MealCard';
 const MealCategories = () => {
     const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'All'];
     const [activeCategory, setActiveCategory] = useState('All');
-    const [isPending, error, meals] = useMeals()
+    const [isPending, error, meals] = useMeals(activeCategory);
 
     if (error) {
         return (
