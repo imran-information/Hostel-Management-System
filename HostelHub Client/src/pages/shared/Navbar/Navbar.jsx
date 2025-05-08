@@ -131,7 +131,7 @@ const Navbar = () => {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden mt-4 pb-4 space-y-2">
+                    <div className="lg:hidden mt-4 pb-4 space-y-2  ">
                         <ul className="space-y-2">
                             {links}
                         </ul>

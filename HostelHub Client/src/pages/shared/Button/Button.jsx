@@ -20,6 +20,7 @@ const Button = ({
 
     // Base button classes
     const baseClasses = `
+    font-oswald
     rounded-xl font-medium transition-all duration-300
     focus:outline-none focus:ring-2 focus:ring-offset-2
     disabled:opacity-70 disabled:cursor-not-allowed
@@ -50,7 +51,12 @@ const Button = ({
       bg-gradient-to-r from-red-600 to-red-500 text-white
       hover:from-red-700 hover:to-red-600
       focus:ring-red-300
-    `
+    `,
+        outline: `
+    text-indigo-600 border-2 border-indigo-600
+    hover:bg-indigo-600 hover:text-white
+    mb-0
+  `
     };
 
     // Size classes
