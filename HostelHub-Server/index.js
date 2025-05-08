@@ -48,6 +48,8 @@ app.get('/meals', async (req, res) => {
         const { category, mealsPage, priceFilter, sortOrder, searchQuery } = req.query;
 
         // console.log(sortOrder); 
+        const limit = mealsPage ? null : 8;
+        console.log(mealsPage);
 
         let query = {};
         // Title Search  
@@ -86,17 +88,19 @@ app.get('/meals', async (req, res) => {
 
         let meals;
 
-        if (mealsPage) {
-            // Load all meals
+        if (mealsPage === 'true') {
+            console.log('start');
             meals = await mealsCollects.find(query).sort(sortOption).toArray();
-        } else {
-            // Use pagination
-            const page = parseInt(mealsPage) || 1;
-            const pageSize = 8;
-            const skip = (page - 1) * pageSize;
 
-            meals = await mealsCollects.find(query).skip(skip).limit(pageSize).toArray();
+        } else if (mealsPage === 'false') {
+            let filter = {}
+            if (category && category !== 'All') {
+                filter.category = category;
+            }
+            // console.log('end');
+            meals = await mealsCollects.find(filter).limit(8).toArray();
         }
+
 
         res.send(meals);
     } catch (error) {

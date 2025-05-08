@@ -6,6 +6,9 @@ const Navbar = () => {
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
         <li><NavLink to='/meals'>Meals</NavLink></li>
+        <li><NavLink to='/food-safety'>Food Safety</NavLink></li>
+        <li><NavLink to='/social-impact'>Social impact</NavLink></li>
+        <li><NavLink to="/cooking-challenge">Cooking Challenge</NavLink></li>
         <li><NavLink to='/about'>About</NavLink></li>
     </>
     return (
