@@ -3,16 +3,21 @@ import img1 from '../../assets/hostel/1.jpg';
 import img2 from '../../assets/hostel/2.jpg';
 import img3 from '../../assets/hostel/3.jpg';
 import img4 from '../../assets/hostel/4.jpg';
+import img5 from '../../assets/hostel/5.jpg';
+import img6 from '../../assets/hostel/6.jpg';
+import img7 from '../../assets/hostel/7.jpg';
+import img8 from '../../assets/hostel/8.jpg';
+import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader';
 
-const images = [img1, img2, img3, img4];
+const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const Gallery = () => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     return (
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-blue-50">
             <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-12">Our Hostel Gallery</h2>
+                <SectionHeader title="Our Hostel Gallery" subtitle="Take a look at the heart of our community" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {images.map((img, index) => (
                         <div key={index} className="group relative overflow-hidden rounded-xl h-64">

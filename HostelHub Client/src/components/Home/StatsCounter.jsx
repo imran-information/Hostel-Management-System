@@ -9,7 +9,7 @@ const StatsCounter = () => {
     ];
 
     return (
-        <section className="py-16 bg-indigo-600 text-white">
+        <section className="py-16 bg-indigo-600 text-white my-10">
             <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 {stats.map((stat, index) => (
                     <div key={index} className="flex flex-col items-center">

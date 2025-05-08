@@ -2,6 +2,7 @@ import { useState } from 'react';
 import useMeals from '../../hooks/useMeals';
 import MealCardSkeleton from './MealCardSkeletion';
 import MealCard from './MealCard';
+import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader';
 
 const MealCategories = () => {
     const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'All'];
@@ -9,7 +10,7 @@ const MealCategories = () => {
     const mealsPage = false;
     const [isPending, error, meals] = useMeals(activeCategory, mealsPage);
 
-    console.log(meals);
+    // console.log(meals);
 
     if (error) {
         return (
@@ -22,12 +23,7 @@ const MealCategories = () => {
 
     return (
         <section className="container mx-auto px-4 py-8">
-            <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-gray-800 mb-4">Our Meal Categories</h1>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Discover delicious meals prepared fresh daily for our hostel residents
-                </p>
-            </div>
+            <SectionHeader title={"Our Meal Categories"} subtitle={"Discover delicious meals prepared fresh daily for our hostel residents"} />
 
             {/* Category Tabs */}
             <div className="flex flex-wrap justify-center gap-2 mb-8">
