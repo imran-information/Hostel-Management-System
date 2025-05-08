@@ -6,7 +6,7 @@ import CustomToaster from '../pages/shared/CustomToaster/CustomToaster';
 
 const Main = () => {
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen font-poppins">
             <Navbar />
             <main className="flex-grow">
                 <Outlet />

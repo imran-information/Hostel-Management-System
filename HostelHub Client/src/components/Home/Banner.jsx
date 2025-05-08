@@ -1,31 +1,49 @@
 import { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import Button from '../../pages/shared/Button/Button';
+import { ArrowUpRightFromSquare } from 'lucide-react';
 
 const Banner = () => {
     const slides = [
         {
             id: 1,
             title: "Delicious Meals, Anytime",
-            subtitle: "Enjoy fresh, home-style cooking in your hostel",
-            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+            subtitle: "Enjoy fresh, home-style cooking prepared by our expert chefs",
+            image: "https://images.unsplash.com/photo-1641232340210-db39a5ca2806?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             category: "View Today's Menu",
-            link: "/meals"
+            link: "/meals",
+            badge: "Chef's Special",
+            ctaText: "Order Now"
         },
         {
             id: 2,
             title: "Premium Membership Plans",
-            subtitle: "Upgrade for exclusive meal options and benefits",
+            subtitle: "Unlock exclusive benefits including priority booking and special menus",
             image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80",
             category: "Explore Plans",
-            link: "/membership"
+            link: "/membership",
+            badge: "Popular",
+            ctaText: "Join Now"
         },
         {
             id: 3,
             title: "Comfortable Living Spaces",
-            subtitle: "Your home away from home",
+            subtitle: "Modern rooms designed for productivity and relaxation",
             image: "https://images.unsplash.com/photo-1653204280036-c272f16ec7ed?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             category: "Book Now",
-            link: "/booking"
+            link: "/booking",
+            badge: "Limited Availability",
+            ctaText: "View Rooms"
+        },
+        {
+            id: 4,
+            title: "24/7 Student Support",
+            subtitle: "Dedicated assistance for all your hostel needs",
+            image: "https://images.unsplash.com/photo-1610208385141-601c7503eb10?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            category: "Get Help",
+            link: "/support",
+            badge: "New Service",
+            ctaText: "Contact Us"
         }
     ];
 
@@ -46,7 +64,7 @@ const Banner = () => {
     const goToSlide = (index) => {
         setCurrentSlide(index);
         setIsAutoPlaying(false);
-        setTimeout(() => setIsAutoPlaying(true), 10000); // Resume auto-play after 10s
+        setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
     const goToPrevSlide = () => {
@@ -62,7 +80,7 @@ const Banner = () => {
     };
 
     return (
-        <div className="relative w-full h-[60vh] max-h-[600px] overflow-hidden">
+        <div className="relative w-full  h-[400px] sm:h-[500px] md:h-[600px] lg:h-screen overflow-hidden">
             {/* Slides */}
             <div className="relative w-full h-full">
                 {slides.map((slide, index) => (
@@ -80,18 +98,13 @@ const Banner = () => {
 
                         {/* Content */}
                         <div className="relative h-full flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 text-white">
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 animate-fadeInUp">
+                            <h1 className="text-4xl sm:text-5xl md:text-7xl font-oswald font-bold mb-4 animate-fadeInUp">
                                 {slide.title}
                             </h1>
-                            <p className="text-xl sm:text-2xl mb-8 max-w-2xl animate-fadeInUp delay-100">
+                            <p className="text-xl sm:text-2xl mb-8 max-w-2xl  animate-fadeInUp delay-100 font-poppins">
                                 {slide.subtitle}
                             </p>
-                            <a
-                                href={slide.link}
-                                className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300 animate-fadeInUp delay-200"
-                            >
-                                {slide.category}
-                            </a>
+                            <Button to={slide.link} size='large' iconPosition='right' icon={<ArrowUpRightFromSquare />} >{slide.category}</Button>
                         </div>
                     </div>
                 ))}
