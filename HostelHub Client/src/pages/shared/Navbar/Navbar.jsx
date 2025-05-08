@@ -5,6 +5,7 @@ const Navbar = () => {
     const user = false
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
+        <li><NavLink to='/meals'>Meals</NavLink></li>
         <li><NavLink to='/about'>About</NavLink></li>
     </>
     return (
@@ -20,7 +21,7 @@ const Navbar = () => {
                         {links}
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">daisyUI</a>
+                <a className="btn btn-ghost text-xl">HostelHub</a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">

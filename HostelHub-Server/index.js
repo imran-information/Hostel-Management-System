@@ -45,25 +45,69 @@ app.get('/meals', async (req, res) => {
     try {
         const db = await connectDB();
         const mealsCollects = db.collection('meals');
+        const { category, mealsPage, priceFilter, sortOrder, searchQuery } = req.query;
 
-        const { category } = req.query;
-        // console.log(category);
+        // console.log(sortOrder); 
+
         let query = {};
-        if (category && category !== 'All') {
-            query.category = category;
-            // console.log(category);
+        // Title Search  
+
+        if (searchQuery) {
+            query.title = {
+                $regex: searchQuery,
+                $options: 'i'
+            };
         }
 
-        const meals = await mealsCollects.find(query).limit(8).toArray();
+        // Category Filter
+        if (category && category !== 'All') {
+            query.category = category;
+        }
+
+        // Price Filter
+        if (priceFilter === '5') {
+            query.price = { $lte: 5 };
+        } else if (priceFilter === '10') {
+            query.price = { $gt: 5, $lte: 10 };
+        } else if (priceFilter === '20') {
+            query.price = { $gt: 10, $lte: 20 };
+        } else if (priceFilter === 'expensive') {
+            query.price = { $gt: 20 };
+        }
+
+        // Sorting logic
+        const sortOption = {};
+
+        if (sortOrder === 'asc') {
+            sortOption.price = 1;
+        } else if (sortOrder === 'desc') {
+            sortOption.price = -1;
+        }
+
+        let meals;
+
+        if (mealsPage) {
+            // Load all meals
+            meals = await mealsCollects.find(query).sort(sortOption).toArray();
+        } else {
+            // Use pagination
+            const page = parseInt(mealsPage) || 1;
+            const pageSize = 8;
+            const skip = (page - 1) * pageSize;
+
+            meals = await mealsCollects.find(query).skip(skip).limit(pageSize).toArray();
+        }
+
         res.send(meals);
     } catch (error) {
         console.error("Error fetching meals:", error);
         res.status(500).send({ message: 'Failed to fetch meals' });
     }
+
 });
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`); 
+    console.log(`Server running on port ${PORT}`);
 });
 
