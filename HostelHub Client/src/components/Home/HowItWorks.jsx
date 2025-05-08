@@ -8,7 +8,7 @@ const HowItWorks = () => {
             icon: <FaUserEdit className="text-indigo-600" size={32} />,
             title: "Register Account",
             desc: "Create your student profile in minutes",
-            color: "bg-indigo-50"
+            color: "bg-blue-50"
         },
         {
             icon: <FaUtensils className="text-blue-600" size={32} />,
@@ -17,16 +17,16 @@ const HowItWorks = () => {
             color: "bg-blue-50"
         },
         {
-            icon: <FaCreditCard className="text-green-600" size={32} />,
+            icon: <FaCreditCard className="text-blue-600" size={32} />,
             title: "Secure Payment",
             desc: "Complete with our encrypted checkout",
-            color: "bg-green-50"
+            color: "bg-blue-50"
         },
         {
-            icon: <FaSmile className="text-amber-600" size={32} />,
+            icon: <FaSmile className="text-blue-600" size={32} />,
             title: "Enjoy Experience",
             desc: "Access premium hostel facilities",
-            color: "bg-amber-50"
+            color: "bg-blue-50"
         }
     ];
 
@@ -53,7 +53,7 @@ const HowItWorks = () => {
     };
 
     return (
-        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <section className="py-20 bg-blue-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <SectionHeader
                     title="How It Works"
@@ -72,10 +72,10 @@ const HowItWorks = () => {
                             key={index}
                             variants={itemVariants}
                             whileHover={{ y: -5 }}
-                            className={`${step.color} p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300`}
+                            className={`bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300`}
                         >
                             <div className="flex flex-col items-center text-center">
-                                <div className="mb-5 p-4 bg-white rounded-full shadow-sm">
+                                <div className="mb-5 p-4 bg-blue-50 rounded-full shadow-sm">
                                     {step.icon}
                                 </div>
                                 <h3 className="text-xl font-semibold text-gray-800 mb-3">

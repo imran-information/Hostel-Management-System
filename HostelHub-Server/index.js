@@ -79,19 +79,16 @@ app.get('/meals', async (req, res) => {
 
         // Sorting logic
         const sortOption = {};
-
         if (sortOrder === 'asc') {
             sortOption.price = 1;
         } else if (sortOrder === 'desc') {
             sortOption.price = -1;
         }
-
         let meals;
 
         if (mealsPage === 'true') {
             console.log('start');
             meals = await mealsCollects.find(query).sort(sortOption).toArray();
-
         } else if (mealsPage === 'false') {
             let filter = {}
             if (category && category !== 'All') {
