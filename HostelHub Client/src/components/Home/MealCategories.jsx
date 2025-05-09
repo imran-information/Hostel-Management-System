@@ -76,7 +76,7 @@ const MealCategories = () => {
 
             {
                 meals && <div className=" flex justify-center mt-5">
-                    <Button to='/meals' icon={<ArrowBigRight />} iconPosition='right'>View All Meals</Button>
+                    <Button to='/meals' icon={<ArrowBigRight />} iconPosition='right' size='large'>View All Meals</Button>
                 </div>
             }
         </section>
