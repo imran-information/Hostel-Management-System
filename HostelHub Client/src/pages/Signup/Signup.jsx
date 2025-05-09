@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, Loader2, Router } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 // Validation schema
 const signupSchema = yup.object().shape({
@@ -46,21 +47,71 @@ const Signup = () => {
     const onSubmit = async (data) => {
         setIsLoading(true);
         setSignupError('');
-
-        const { email, password, name } = data; // Destructure values from form
+        const { email, password, name } = data;
 
         try {
-            await createUser(email, password);
-            console.log('Login data:', data);
-            // update the user profile with their name here
+            // Show loading toast
+            toast.loading('Creating your account...', {
+                id: 'signup-toast'
+            });
+
+            // Create user account
+            const userCredential = await createUser(email, password);
+            const user = userCredential.user;
+
+            // Update user profile with name
             await updateProfileUser(name);
 
+            // Optional: Send email verification
+            // await sendEmailVerification(user);
+
             console.log('Signup successful', user);
+
+            // Update to success toast
+            toast.success(`Welcome, ${name}! Account created successfully`, {
+                id: 'signup-toast',
+                duration: 4000
+            });
+
             reset();
-            // Redirect to dashboard or send verification email
-            // router.push('/dashboard');
+
+            // Redirect after delay to allow user to see success message
+            setTimeout(() => navigate('/dashboard'), 2000);
+
         } catch (error) {
-            setSignupError(error.message);
+            let errorMessage = 'Signup failed. Please try again.';
+
+            // Handle specific Firebase errors
+            if (error.code) {
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'Email already in use. Try logging in instead.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 6 characters';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Email/password accounts are not enabled';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Try again later';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+            }
+
+            setSignupError(errorMessage);
+
+            // Show error toast
+            toast.error(errorMessage, {
+                id: 'signup-toast',
+                duration: 5000
+            });
+
             console.error('Signup error:', error);
         } finally {
             setIsLoading(false);
@@ -71,14 +122,61 @@ const Signup = () => {
         try {
             setIsLoading(true);
             setSignupError('');
-            await googleSignInUser()
-                .then(result => {
-                    console.log('Google signup successful', result.user);
-                    navigate('/');
-                })
-            // Redirect or handle successful login  
+
+            // Show loading toast
+            toast.loading('Signing up with Google...', {
+                id: 'google-signup',
+                duration: 10000 // Longer duration for potential Google popup
+            });
+
+            const result = await googleSignInUser();
+            const user = result.user;
+
+            console.log('Google signup successful', user);
+
+            // Success toast
+            toast.success(`Welcome, ${user.displayName || 'User'}!`, {
+                id: 'google-signup',
+                duration: 3000
+            });
+
+            // Redirect after slight delay
+            setTimeout(() => navigate('/'), 1500);
+
         } catch (error) {
-            setSignupError(error.message);
+            let errorMessage = 'Google signup failed. Please try again.';
+
+            // Handle specific Google auth errors
+            if (error.code) {
+                switch (error.code) {
+                    case 'auth/account-exists-with-different-credential':
+                        errorMessage = 'An account already exists with this email. Try logging in instead.';
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'Signup cancelled - you closed the Google popup.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        errorMessage = 'Signup cancelled - another popup is already open.';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage = 'Popup blocked - please allow popups to sign in with Google.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error - please check your internet connection.';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+            }
+
+            setSignupError(errorMessage);
+
+            // Error toast
+            toast.error(errorMessage, {
+                id: 'google-signup',
+                duration: 5000
+            });
+
             console.error('Google signup error:', error);
         } finally {
             setIsLoading(false);
