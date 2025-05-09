@@ -1,18 +1,22 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import logo from '../../../assets/logo/logo-transparent.png'
+import React, { useState, useEffect } from 'react';
+import logo from '../../../assets/logo/logo-transparent.png';
 import Button from '../Button/Button';
 import useAuth from '../../../hooks/useAuth';
 import toast from 'react-hot-toast';
 import { FiLogOut, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { Avatar } from '@radix-ui/themes';
+import { LogOutIcon, UserIcon } from 'lucide-react';
+import { DashboardIcon } from '@radix-ui/react-icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import UserDropdown from './UserDropdown';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { user, signOutUser } = useAuth()
-    console.log(user);
+    const { user, signOutUser } = useAuth();
+    const navigate = useNavigate();
 
-    const navigate = useNavigate()
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -23,12 +27,60 @@ const Navbar = () => {
 
     const links = (
         <>
-            <li><NavLink to='/' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home <span className="nav-link-indicator" /></NavLink></li>
-            <li><NavLink to='/meals' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Meals <span className="nav-link-indicator" /></NavLink></li>
-            <li><NavLink to='/food-safety' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Food Safety <span className="nav-link-indicator" /></NavLink></li>
-            <li><NavLink to='/social-impact' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Social Impact <span className="nav-link-indicator" /></NavLink></li>
-            <li><NavLink to='/cooking-challenge' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Challenge <span className="nav-link-indicator" /></NavLink></li>
-            <li><NavLink to='/about' className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>About <span className="nav-link-indicator" /></NavLink></li>
+            <li>
+                <NavLink
+                    to='/'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    Home <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to='/meals'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    Meals <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to='/food-safety'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    Food Safety <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to='/social-impact'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    Social Impact <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to='/cooking-challenge'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    Challenge <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
+            <li>
+                <NavLink
+                    to='/about'
+                    className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                >
+                    About <span className="nav-link-indicator" />
+                </NavLink>
+            </li>
         </>
     );
 
@@ -57,9 +109,8 @@ const Navbar = () => {
                         duration: 4000,
                     }
                 );
-
-                navigate('/')
-                console.log('Successfully signed out!');
+                setMobileMenuOpen(false);
+                navigate('/');
             })
             .catch(error => {
                 toast.error(
@@ -77,31 +128,42 @@ const Navbar = () => {
     };
 
     return (
-        <header className={`fixed top-0 w-full z-50 transition-all duration-500 backdrop-invert backdrop-opacity-10  ${isScrolled ? 'bg-black/100 backdrop-blur-sm shadow-sm py-2' : 'bg-transparent py-4'}`}>
+        <header className={`fixed top-0 w-full z-50 transition-all duration-500 backdrop-filter ${isScrolled ? 'bg-black/80 backdrop-blur-sm shadow-sm py-2' : 'bg-transparent py-4'}`}>
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between">
-                    {/* Logo */}
-                    <div className="flex items-center">
-                        <Link to='/'>
-                            {
-                                isScrolled ? <img className='w-60' src={logo} alt="" /> : <img className='w-60' src={logo} alt="" />
-                            }
-                        </Link>
+                    {/* Logo - Visible on all screens */}
+                    <Link to='/' className="flex items-center">
+                        <img className='w-40 lg:w-60' src={logo} alt="Logo" />
+                    </Link>
 
-                    </div>
-
-                    {/* Desktop Navigation */}
+                    {/* Desktop Navigation - Hidden on mobile */}
                     <nav className="hidden lg:flex items-center space-x-1">
                         <ul className={`flex space-x-5 text-white font-bold font-oswald text-lg`}>
                             {links}
                         </ul>
                     </nav>
 
-                    {/* Mobile Menu Button */}
-                    <div className="lg:hidden">
+                    {/* Mobile Menu Button - Hidden on desktop */}
+                    <div className="flex items-center lg:hidden space-x-4">
+                        {user ? (
+                            <div className="lg:hidden">
+                                <UserDropdown handleSignOutUser={handleSignOutUser} />
+                            </div>
+                        ) : (
+                            <div className="flex space-x-2">
+                                <Button isOutline variant="secondary" to="/login" size="sm">
+                                    Login
+                                </Button>
+                                <Button to="/signup" size="sm">
+                                    Sign Up
+                                </Button>
+                            </div>
+                        )}
+
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="p-2 rounded-lg hover:bg-indigo-50 transition-colors"
+                            className="p-2 text-white rounded-lg focus:outline-none"
+                            aria-label="Toggle menu"
                         >
                             {mobileMenuOpen ? (
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,40 +177,61 @@ const Navbar = () => {
                         </button>
                     </div>
 
-                    {/* Auth Buttons */}
-                    <div className="hidden lg:flex items-center space-x-2">
-                        {
-                            user ? (
-                                <Button onClick={handleSignOutUser}>Sign Out</Button>
-                            ) : (
-                                <>
-                                    <Button isOutlet variant="secondary" to='/login' >Login</Button>
-                                    <Button to='/signup'>Sign Up</Button>
-                                </>
-                            )}
+                    {/* Desktop Auth Buttons - Hidden on mobile */}
+                    <div className="hidden lg:flex">
+                        <UserDropdown handleSignOutUser={handleSignOutUser} />
                     </div>
                 </div>
 
-                {/* Mobile Menu */}
-                {mobileMenuOpen && (
-                    <div className="lg:hidden mt-4 pb-4 space-y-2  ">
-                        <ul className="space-y-2">
-                            {links}
-                        </ul>
-                        <div className="pt-4 space-y-2 border-t border-gray-100">
-                            {user ? (
-                                <Button onClick={handleSignOutUser}>Sign Out</Button>
-                            ) : (
-                                <>
-                                    <Button isOutlet variant="secondary" to='/login' >Login</Button>
-                                    <Button to='/signup'>Sign Up</Button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                )}
+                {/* Mobile Menu - Only shown when mobileMenuOpen is true */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="lg:hidden overflow-hidden"
+                        >
+                            <div className="pt-4 pb-4 space-y-4 bg-black/90 backdrop-blur-sm rounded-lg mt-2">
+                                <ul className="space-y-4 px-4">
+                                    {React.Children.toArray(links).map((link, index) => (
+                                        <motion.li
+                                            key={index}
+                                            initial={{ x: -20, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            transition={{ delay: index * 0.1 }}
+                                        >
+                                            {link}
+                                        </motion.li>
+                                    ))}
+                                </ul>
+                                {!user && (
+                                    <div className="px-4 pt-4 space-y-3 border-t border-gray-700">
+                                        <Button
+                                            fullWidth
+                                            isOutline
+                                            variant="secondary"
+                                            to='/login'
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            Login
+                                        </Button>
+                                        <Button
+                                            fullWidth
+                                            to='/signup'
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            Sign Up
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </header >
+        </header>
     );
 };
 

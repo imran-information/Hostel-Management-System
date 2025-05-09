@@ -7,11 +7,16 @@ import Meals from "../pages/Meals/Meals";
 import FoodSafety from "../pages/FoodSafety/FoodSafety";
 import SocialImpact from "../pages/SocialImpact/SocialImpact";
 import CookingChallenge from "../pages/CookingChallenge/CookingChallenge";
+import DashboardLayout from "../layouts/DashboardLayout";
+import AdminProfile from "../pages/Dashboard/Admin/AdminProfile";
+import UserManagement from "../pages/Dashboard/Admin/UserManagement";
+import AddMealForm from "../pages/Dashboard/Admin/AddMealFrom";
 
 
 const Router = () => {
     return (
         <Routes>
+            {/* Main layout */}
             <Route path="/" element={<Main />} >
                 <Route index element={<Home />} />
                 <Route path="/meals" element={<Meals />} />
@@ -19,8 +24,19 @@ const Router = () => {
                 <Route path="/social-impact" element={<SocialImpact />} />
                 <Route path="/cooking-challenge" element={<CookingChallenge />} />
             </Route>
+            {/* SignIn page */}
             <Route path="/login" element={<Login />} />
+            {/* SignUp page  */}
             <Route path="/signup" element={<Signup />} />
+
+
+            {/* Dashboard Layout */}
+            <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route path="admin-profile" element={<AdminProfile />} />
+                <Route path="user-management" element={<UserManagement />} />
+                <Route path="add-meal" element={<AddMealForm />} />
+            </Route>
+
         </Routes>
     )
 
