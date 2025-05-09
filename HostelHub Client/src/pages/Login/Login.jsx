@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, Loader2, } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import { Link, useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
 
 // Validation schema
 const loginSchema = yup.object().shape({
@@ -39,15 +40,54 @@ const Login = () => {
     const onSubmit = async (data) => {
         setIsLoading(true);
         setLoginError('');
-
         const { email, password } = data;
 
         try {
+            // Show loading toast
+            toast.loading('Signing in...', {
+                id: 'login-toast'
+            });
+
             const result = await loginUser(email, password);
             console.log('Logged in user:', result.user);
-            navigate('/')
+
+            // Update to success
+            toast.success('Login successful! Redirecting...', {
+                id: 'login-toast'
+            });
+
+            navigate('/');
         } catch (error) {
-            setLoginError('Login failed. Please try again.');
+            let errorMessage = 'Login failed. Please try again.';
+
+            // Handle specific Firebase errors
+            if (error.code) {
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been disabled';
+                        break;
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage = 'Invalid email or password';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Try again later';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+            }
+
+            setLoginError(errorMessage);
+
+            // Update to error
+            toast.error(errorMessage, {
+                id: 'login-toast'
+            });
+
             console.error('Login error:', error);
         } finally {
             setIsLoading(false);
@@ -58,21 +98,37 @@ const Login = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
+    
     const handleGoogleLogin = async () => {
         try {
             setIsLoading(true);
             setLoginError('');
+            // Show loading toast
+            toast.loading('Signing in with Google...', {
+                id: 'google-signin' // Unique ID to update this toast later
+            });
+
             await googleSignInUser()
                 .then(result => {
                     console.log('Google login successful', result.user);
-                })
-            // Redirect or handle successful login 
-            navigate('/')
+
+                    // Update loading toast to success
+                    toast.success('Login successful! Redirecting...', {
+                        id: 'google-signin' // Same ID to replace the loading toast
+                    });
+
+                    navigate('/');
+                });
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
             setLoginError(errorMessage);
+
+            // Update loading toast to error
+            toast.error(`Login failed: ${errorMessage}`, {
+                id: 'google-signin' // Same ID to replace the loading toast
+            });
+
             console.error('Google login error:', errorCode, errorMessage);
         } finally {
             setIsLoading(false);
