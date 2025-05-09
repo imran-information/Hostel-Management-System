@@ -50,7 +50,7 @@ const Meals = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-30 ">
+        <div className="min-h-screen bg-slate-50 mt-30 ">
             {/* Header with subtle animation */}
             <motion.header
                 initial={{ y: -20, opacity: 0 }}

@@ -6,6 +6,7 @@ import { Eye, EyeOff, Loader2, Router } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
+import { onGoogleSignup, saveUserData } from '../../utils';
 
 // Validation schema
 const signupSchema = yup.object().shape({
@@ -31,7 +32,7 @@ const Signup = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [signupError, setSignupError] = useState('');
     const navigate = useNavigate()
-    const { createUser, updateProfileUser, user, googleSignInUser } = useAuth();
+    const { createUser, updateProfileUser, googleSignInUser } = useAuth();
 
 
     const {
@@ -48,7 +49,6 @@ const Signup = () => {
         setIsLoading(true);
         setSignupError('');
         const { email, password, name } = data;
-
         try {
             // Show loading toast
             toast.loading('Creating your account...', {
@@ -56,28 +56,26 @@ const Signup = () => {
             });
 
             // Create user account
-            const userCredential = await createUser(email, password);
-            const user = userCredential.user;
-
+            await createUser(email, password);
             // Update user profile with name
             await updateProfileUser(name);
-
+            const user = {
+                displayName: name,
+                email,
+            };
+            await saveUserData(user)
             // Optional: Send email verification
             // await sendEmailVerification(user);
 
-            console.log('Signup successful', user);
-
+            // console.log('Signup successful', user);
             // Update to success toast
             toast.success(`Welcome, ${name}! Account created successfully`, {
                 id: 'signup-toast',
                 duration: 4000
             });
-
             reset();
-
             // Redirect after delay to allow user to see success message
-            setTimeout(() => navigate('/dashboard'), 2000);
-
+            setTimeout(() => navigate('/'), 2000);
         } catch (error) {
             let errorMessage = 'Signup failed. Please try again.';
 
@@ -103,85 +101,24 @@ const Signup = () => {
                         errorMessage = error.message || errorMessage;
                 }
             }
-
             setSignupError(errorMessage);
-
             // Show error toast
             toast.error(errorMessage, {
                 id: 'signup-toast',
                 duration: 5000
             });
-
             console.error('Signup error:', error);
         } finally {
             setIsLoading(false);
         }
     };
 
+    // google signIn user 
     const handleGoogleSignup = async () => {
-        try {
-            setIsLoading(true);
-            setSignupError('');
-
-            // Show loading toast
-            toast.loading('Signing up with Google...', {
-                id: 'google-signup',
-                duration: 10000 // Longer duration for potential Google popup
-            });
-
-            const result = await googleSignInUser();
-            const user = result.user;
-
-            console.log('Google signup successful', user);
-
-            // Success toast
-            toast.success(`Welcome, ${user.displayName || 'User'}!`, {
-                id: 'google-signup',
-                duration: 3000
-            });
-
-            // Redirect after slight delay
-            setTimeout(() => navigate('/'), 1500);
-
-        } catch (error) {
-            let errorMessage = 'Google signup failed. Please try again.';
-
-            // Handle specific Google auth errors
-            if (error.code) {
-                switch (error.code) {
-                    case 'auth/account-exists-with-different-credential':
-                        errorMessage = 'An account already exists with this email. Try logging in instead.';
-                        break;
-                    case 'auth/popup-closed-by-user':
-                        errorMessage = 'Signup cancelled - you closed the Google popup.';
-                        break;
-                    case 'auth/cancelled-popup-request':
-                        errorMessage = 'Signup cancelled - another popup is already open.';
-                        break;
-                    case 'auth/popup-blocked':
-                        errorMessage = 'Popup blocked - please allow popups to sign in with Google.';
-                        break;
-                    case 'auth/network-request-failed':
-                        errorMessage = 'Network error - please check your internet connection.';
-                        break;
-                    default:
-                        errorMessage = error.message || errorMessage;
-                }
-            }
-
-            setSignupError(errorMessage);
-
-            // Error toast
-            toast.error(errorMessage, {
-                id: 'google-signup',
-                duration: 5000
-            });
-
-            console.error('Google signup error:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setSignupError, navigate)
+        await saveUserData(user)
+        console.log(user);
+    }
 
     const togglePasswordVisibility = (field) => {
         if (field === 'password') {

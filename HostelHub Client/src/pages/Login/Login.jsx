@@ -6,6 +6,7 @@ import { Eye, EyeOff, Loader2, } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
+import { onGoogleSignup, saveUserData } from '../../utils';
 
 // Validation schema
 const loginSchema = yup.object().shape({
@@ -50,9 +51,9 @@ const Login = () => {
 
             const result = await loginUser(email, password);
             console.log('Logged in user:', result.user);
-
+            await saveUserData(result.user)
             // Update to success
-            toast.success('Login successful! Redirecting...', {
+            toast.success('Login successful!', {
                 id: 'login-toast'
             });
 
@@ -98,42 +99,12 @@ const Login = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-    
+
     const handleGoogleLogin = async () => {
-        try {
-            setIsLoading(true);
-            setLoginError('');
-            // Show loading toast
-            toast.loading('Signing in with Google...', {
-                id: 'google-signin' // Unique ID to update this toast later
-            });
-
-            await googleSignInUser()
-                .then(result => {
-                    console.log('Google login successful', result.user);
-
-                    // Update loading toast to success
-                    toast.success('Login successful! Redirecting...', {
-                        id: 'google-signin' // Same ID to replace the loading toast
-                    });
-
-                    navigate('/');
-                });
-        } catch (error) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            setLoginError(errorMessage);
-
-            // Update loading toast to error
-            toast.error(`Login failed: ${errorMessage}`, {
-                id: 'google-signin' // Same ID to replace the loading toast
-            });
-
-            console.error('Google login error:', errorCode, errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setLoginError, navigate)
+        await saveUserData(user)
+        console.log(user);
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
