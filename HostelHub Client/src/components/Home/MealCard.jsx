@@ -5,13 +5,34 @@ import { motion } from 'framer-motion';
 import useAuth from '../../hooks/useAuth';
 import MealModal from './MealModal/MealModal';
 import Button from '../../pages/shared/Button/Button';
+import LikedAuthModal from './LikedAuthModal/LikedAuthModal';
 
 const MealCard = ({ meal }) => {
     const { user } = useAuth();
     const [isLiked, setIsLiked] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const formattedPrice = meal.price.toFixed(2);
+
+    const handleLikedMeal = (mealId) => {
+        if (!user) {
+            setShowAuthModal(true);
+            return;
+        }
+        setIsLiked(true)
+        console.log('Liking meal:', mealId);
+    };
+
+    const handleUnLikedMeal = (mealId) => {
+        if (!user) {
+            setShowAuthModal(true);
+            return;
+        }
+        setIsLiked(false)
+        // Your existing unlike logic
+        console.log('Unliking meal:', mealId);
+    };
 
     return (
         <motion.div
@@ -34,15 +55,15 @@ const MealCard = ({ meal }) => {
 
                 {/* Like Button */}
                 <motion.button
-                    onClick={() => setIsLiked(!isLiked)}
+
                     className="absolute top-3 right-3 bg-white bg-opacity-80 p-2 rounded-full hover:bg-opacity-100 transition-all"
                     aria-label={isLiked ? 'Unlike meal' : 'Like meal'}
                     whileTap={{ scale: 0.9 }}
                 >
                     {isLiked ? (
-                        <FaHeart className="text-red-500" />
+                        <FaHeart onClick={() => handleUnLikedMeal(meal._id)} className="text-indigo-600" />
                     ) : (
-                        <FaRegHeart className="text-gray-600 hover:text-red-400 transition-colors" />
+                        <FaRegHeart onClick={() => handleLikedMeal(meal._id)} className="text-indigo-500 hover:text-indigo-600 transition-colors" />
                     )}
                 </motion.button>
 
@@ -90,7 +111,6 @@ const MealCard = ({ meal }) => {
                 <div className=" space-y-2 flex justify-between items-center">
                     <MealModal meal={meal}>
                         <Button variant='outline' >Quick View</Button>
-
                     </MealModal>
 
                     {user && (
@@ -98,6 +118,7 @@ const MealCard = ({ meal }) => {
                     )}
                 </div>
             </div>
+            <LikedAuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </motion.div>
     );
 };

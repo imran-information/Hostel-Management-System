@@ -3,7 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
 import { Eye, EyeOff, Loader2, Router } from 'lucide-react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 import { onGoogleSignup, saveUserData } from '../../utils';
@@ -31,8 +31,9 @@ const Signup = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [signupError, setSignupError] = useState('');
-    const navigate = useNavigate()
     const { createUser, updateProfileUser, googleSignInUser } = useAuth();
+    const navigate = useNavigate()
+    const location = useLocation()
 
 
     const {
@@ -74,8 +75,7 @@ const Signup = () => {
                 duration: 4000
             });
             reset();
-            // Redirect after delay to allow user to see success message
-            setTimeout(() => navigate('/'), 2000);
+            setTimeout(() => navigate(location?.state?.from || '/'), 1500);
         } catch (error) {
             let errorMessage = 'Signup failed. Please try again.';
 
@@ -115,7 +115,7 @@ const Signup = () => {
 
     // google signIn user 
     const handleGoogleSignup = async () => {
-        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setSignupError, navigate)
+        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setSignupError, navigate, location)
         await saveUserData(user)
         console.log(user);
     }
