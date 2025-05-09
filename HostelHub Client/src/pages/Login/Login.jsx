@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useState } from 'react';
 import { Eye, EyeOff, Loader2, } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { onGoogleSignup, saveUserData } from '../../utils';
 
@@ -27,6 +27,9 @@ const Login = () => {
     const [loginError, setLoginError] = useState('');
     const { loginUser, googleSignInUser } = useAuth();
     const navigate = useNavigate()
+    const location = useLocation();
+
+    console.log(location);
 
     const {
         register,
@@ -36,6 +39,7 @@ const Login = () => {
         resolver: yupResolver(loginSchema),
         mode: 'onBlur',
     });
+
 
     // Form Submission 
     const onSubmit = async (data) => {
@@ -56,8 +60,8 @@ const Login = () => {
             toast.success('Login successful!', {
                 id: 'login-toast'
             });
+            navigate(location?.state?.from || '/');
 
-            navigate('/');
         } catch (error) {
             let errorMessage = 'Login failed. Please try again.';
 
@@ -101,7 +105,7 @@ const Login = () => {
     };
 
     const handleGoogleLogin = async () => {
-        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setLoginError, navigate)
+        const user = await onGoogleSignup(googleSignInUser, setIsLoading, setLoginError, navigate, location)
         await saveUserData(user)
         console.log(user);
     }

@@ -13,7 +13,7 @@ export const saveUserData = async (user) => {
 }
 
 
-export const onGoogleSignup = async (googleSignInUser, setIsLoading, setError, navigate) => {
+export const onGoogleSignup = async (googleSignInUser, setIsLoading, setError, navigate, location) => {
     try {
         setIsLoading(true);
         setError('');
@@ -30,7 +30,7 @@ export const onGoogleSignup = async (googleSignInUser, setIsLoading, setError, n
             duration: 3000
         });
         // Delay redirect 
-        setTimeout(() => navigate('/'), 1500);
+        setTimeout(() => navigate(location?.state?.from || '/'), 1000);
         return user;
     } catch (error) {
         const errorMessage = getGoogleAuthErrorMessage(error);
