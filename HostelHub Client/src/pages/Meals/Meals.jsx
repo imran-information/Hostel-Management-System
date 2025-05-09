@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaHeart, FaRegHeart, FaUtensils, FaStar, FaFilter, FaSearch } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { motion, AnimatePresence } from 'framer-motion';
 import useMeals from '../../hooks/useMeals';
 import MealCard from '../../components/Home/MealCard';
 import MealCardSkeleton from '../../components/Home/MealCardSkeletion';
 
-
 const Meals = () => {
-    // Meal categories
     const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'All'];
     const [activeCategory, setActiveCategory] = useState('All');
     const [priceFilter, setPriceFilter] = useState('all');
@@ -15,13 +14,9 @@ const Meals = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [sortOrder, setSortOrder] = useState('asc');
     const [page, setPage] = useState(1);
-    const mealsPage = true
+    const mealsPage = true;
     const [isPending, error, meals = []] = useMeals(activeCategory, mealsPage, priceFilter, sortOrder, searchQuery);
 
-    // console.log(meals);  
-    // console.log(priceFilter);
-    // console.log(sortOrder);
-    console.log(searchQuery);
     const priceRanges = [
         { value: 'all', label: 'All Prices' },
         { value: '5', label: '$ (Under $5)' },
@@ -30,76 +25,164 @@ const Meals = () => {
         { value: 'expensive', label: '$$$$ (Over $20)' }
     ];
 
-
-
-
-    // Handle like action (you might want to move this to a separate API call)
-    const handleLike = (id) => {
-        // This would need to be implemented with your backend API
-        console.log(`Liked meal with id: ${id}`);
-    };
-
-    // Reset filters and search
     const resetFilters = () => {
         setActiveCategory('All');
         setPriceFilter('all');
         setSearchQuery('');
-        setSortOrder('asc')
+        setSortOrder('asc');
         setPage(1);
     };
 
+    // Animation variants
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const item = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0 }
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="min-h-screen bg-slate-50 pt-30 ">
+            {/* Header with subtle animation */}
+            <motion.header
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white shadow-sm sticky top-24 z-10"
+            >
                 <div className="container mx-auto px-4 py-4">
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center">
                         <FaUtensils className="mr-2 text-indigo-600" /> Delicious Meals
                     </h1>
                 </div>
-            </header>
+            </motion.header>
 
             {/* Search and Filters */}
             <div className="bg-white py-4 border-b">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row gap-4 items-center">
-                        {/* Search Bar */}
-                        <div className="relative flex-grow w-full md:w-auto">
+                        {/* Search Bar with animation */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="relative flex-grow w-full md:w-auto"
+                        >
                             <FaSearch className="absolute left-3 top-3 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search meals..."
-                                className="pl-10 pr-4 py-2 border rounded-full w-full focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                className="pl-10 pr-4 py-2 border rounded-full w-full focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                             {searchQuery && (
-                                <button
+                                <motion.button
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
                                     onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors duration-200"
                                 >
                                     <IoMdClose />
-                                </button>
+                                </motion.button>
                             )}
-                        </div>
+                        </motion.div>
 
                         {/* Filter Button (Mobile) */}
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setShowFilters(!showFilters)}
-                            className="md:hidden flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full"
+                            className="md:hidden flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors duration-300"
                         >
                             <FaFilter /> Filters
-                        </button>
+                        </motion.button>
                     </div>
-                    {/* Filters Section */}
-                    <div className="mt-6 p-4 bg-gray-50 border rounded-lg shadow-sm">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4">
-                            {/* Category Filter */}
+
+                    {/* Mobile Filters (Drawer) */}
+                    <AnimatePresence>
+                        {showFilters && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="md:hidden overflow-hidden"
+                            >
+                                <div className="mt-4 p-4 bg-gray-50 border rounded-lg shadow-sm space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                                        <select
+                                            className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
+                                            value={activeCategory}
+                                            onChange={(e) => setActiveCategory(e.target.value)}
+                                        >
+                                            {categories.map(category => (
+                                                <option key={category} value={category}>
+                                                    {category}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Price Range</label>
+                                        <select
+                                            className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
+                                            value={priceFilter}
+                                            onChange={(e) => setPriceFilter(e.target.value)}
+                                        >
+                                            {priceRanges.map(range => (
+                                                <option key={range.value} value={range.value}>
+                                                    {range.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Sort By</label>
+                                        <select
+                                            className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
+                                            value={sortOrder}
+                                            onChange={(e) => setSortOrder(e.target.value)}
+                                        >
+                                            <option value="asc">Price: Low to High</option>
+                                            <option value="desc">Price: High to Low</option>
+                                        </select>
+                                    </div>
+
+                                    <button
+                                        onClick={resetFilters}
+                                        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300"
+                                    >
+                                        Reset Filters
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Desktop Filters */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="hidden md:block mt-6 p-4 bg-gray-50 border rounded-lg shadow-sm"
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
                                 <select
-                                    className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
+                                    className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600 transition-all duration-200"
                                     value={activeCategory}
                                     onChange={(e) => setActiveCategory(e.target.value)}
                                 >
@@ -111,12 +194,10 @@ const Meals = () => {
                                 </select>
                             </div>
 
-
-                            {/* Price Range Filter */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-1">Price Range</label>
                                 <select
-                                    className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
+                                    className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600 transition-all duration-200"
                                     value={priceFilter}
                                     onChange={(e) => setPriceFilter(e.target.value)}
                                 >
@@ -128,71 +209,90 @@ const Meals = () => {
                                 </select>
                             </div>
 
-                            {/* price sorting   */}
-                            <div className='flex gap-5'>
-                                <div className="">
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1">Price Sorting</label>
-                                    <select
-                                        className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600"
-                                        value={sortOrder}
-                                        onChange={(e) => setSortOrder(e.target.value)}
-                                    >
-                                        <option value="asc">Price: Low to High</option>
-                                        <option value="desc">Price: High to Low</option>
-                                    </select>
-                                </div>
-
-
-                                {/* Action Buttons */}
-                                <div className="flex items-end gap-2">
-                                    <button
-                                        onClick={resetFilters}
-                                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
-                                    >
-                                        Reset
-                                    </button>
-                                </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Sort By</label>
+                                <select
+                                    className="w-full p-2 border rounded-md focus:ring-indigo-600 focus:border-indigo-600 transition-all duration-200"
+                                    value={sortOrder}
+                                    onChange={(e) => setSortOrder(e.target.value)}
+                                >
+                                    <option value="asc">Price: Low to High</option>
+                                    <option value="desc">Price: High to Low</option>
+                                </select>
                             </div>
 
+                            <div className="flex items-end">
+                                <button
+                                    onClick={resetFilters}
+                                    className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300"
+                                >
+                                    Reset Filters
+                                </button>
+                            </div>
                         </div>
-                    </div>
-
+                    </motion.div>
                 </div>
             </div>
 
             {/* Meals Grid */}
             <main className="container mx-auto px-4 py-8">
                 {error && (
-                    <div className="text-center py-12 text-red-500">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-12 text-red-500"
+                    >
                         Error loading meals: {error.message}
-                    </div>
+                    </motion.div>
                 )}
 
-                {/* Meals Grid */}
+                {/* Loading State */}
                 {isPending ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                    >
                         {[...Array(8)].map((_, i) => (
-                            <MealCardSkeleton key={i} />
+                            <motion.div key={i} variants={item}>
+                                <MealCardSkeleton />
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 ) : meals && meals.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                    >
                         {meals.map((meal) => (
-                            <MealCard key={meal._id} meal={meal} />
+                            <motion.div key={meal._id} variants={item}>
+                                <MealCard meal={meal} />
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 ) : (
-                    <div className="text-center py-12">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-12"
+                    >
                         <h3 className="text-xl font-medium text-gray-500">
                             No meals available in this category
                         </h3>
                         <p className="text-gray-400 mt-2">
                             Check back later or try another category
                         </p>
-                    </div>
+                        <button
+                            onClick={resetFilters}
+                            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300"
+                        >
+                            Reset Filters
+                        </button>
+                    </motion.div>
                 )}
-
-
             </main>
         </div>
     );
