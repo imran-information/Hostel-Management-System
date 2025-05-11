@@ -11,6 +11,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import AdminProfile from "../pages/Dashboard/Admin/AdminProfile";
 import UserManagement from "../pages/Dashboard/Admin/UserManagement";
 import AddMealForm from "../pages/Dashboard/Admin/AddMealFrom";
+import AllMeals from "../pages/Dashboard/Admin/AllMeals";
 
 
 const Router = () => {
@@ -35,6 +36,7 @@ const Router = () => {
                 <Route path="admin-profile" element={<AdminProfile />} />
                 <Route path="user-management" element={<UserManagement />} />
                 <Route path="add-meal" element={<AddMealForm />} />
+                <Route path="all-meals" element={<AllMeals />} />
             </Route>
 
         </Routes>

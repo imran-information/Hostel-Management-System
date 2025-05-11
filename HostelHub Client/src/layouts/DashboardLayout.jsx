@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
-import { FiMenu, FiX, FiHome, FiUsers, FiCalendar, FiCoffee, FiStar, FiSettings, FiLogOut, FiBell } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiUsers, FiCalendar, FiCoffee, FiStar, FiSettings, FiLogOut, FiBell, FiList } from 'react-icons/fi';
 import useAuth from '../hooks/useAuth';
 import logo from '../assets/logo/logo-transparent.png'
 
@@ -14,6 +14,7 @@ const DashboardLayout = () => {
         { name: 'Admin Profile', icon: <FiHome />, path: '/dashboard/admin-profile' },
         { name: 'User Management', icon: <FiUsers />, path: '/dashboard/user-management' },
         { name: 'Add Meal', icon: <FiCoffee />, path: '/dashboard/add-meal' },
+        { name: 'All Meals', icon: <FiList />, path: '/dashboard/all-meals' },
         { name: 'Upcoming Meals', icon: <FiCalendar />, path: '/dashboard/upcoming' },
         { name: 'Reviews', icon: <FiStar />, path: '/dashboard/reviews' },
         { name: 'Settings', icon: <FiSettings />, path: '/dashboard/settings' },

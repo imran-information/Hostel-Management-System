@@ -6,26 +6,31 @@ import useAuth from '../../hooks/useAuth';
 import MealModal from './MealModal/MealModal';
 import Button from '../../pages/shared/Button/Button';
 import LikedAuthModal from './LikedAuthModal/LikedAuthModal';
+import { axiosSecure } from '../../hooks/useAxiosSecure';
 
 const MealCard = ({ meal }) => {
     const { user } = useAuth();
     const [isLiked, setIsLiked] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [selectedMealId, setSelectedMealId] = useState(null);
 
     const formattedPrice = meal.price.toFixed(2);
 
     const handleLikedMeal = (mealId) => {
         if (!user) {
+            setSelectedMealId(mealId);
             setShowAuthModal(true);
             return;
         }
         setIsLiked(true)
-        console.log('Liking meal:', mealId);
+        const { data } = axiosSecure.post('/likedMeals', { email: user.email, mealId })
+        console.log('Liking meal:', mealId, data);
     };
 
     const handleUnLikedMeal = (mealId) => {
         if (!user) {
+            setSelectedMealId(mealId);
             setShowAuthModal(true);
             return;
         }

@@ -144,18 +144,3 @@ const Button = ({
 
 export default Button;
 
-// // Regular button
-// <Button onClick={handleClick}>Click Me</Button>
-
-// // Outlet button
-// <Button isOutlet to="/dashboard" outletProps={{ state: { from: 'home' } }}>
-//   Open Dashboard
-// </Button>
-
-// // Button with icon
-// <Button variant="secondary" icon={<FiSettings />}>
-//   Settings
-// </Button>
-
-// // Loading button
-// <Button loading={true}>Processing...</Button>

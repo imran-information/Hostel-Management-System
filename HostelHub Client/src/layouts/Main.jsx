@@ -1,8 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../pages/shared/Navbar/Navbar';
-import Footer from '../pages/shared/Footer/Footer';
-import CustomToaster from '../pages/shared/CustomToaster/CustomToaster';
+import Footer from '../pages/shared/Footer/Footer'; 
 
 const Main = () => {
     return (
@@ -11,10 +10,7 @@ const Main = () => {
             <main className="flex-grow">
                 <Outlet />
             </main>
-            <Footer />
-
-            {/* Toast  */}
-            <CustomToaster />
+            <Footer /> 
         </div>
     );
 };

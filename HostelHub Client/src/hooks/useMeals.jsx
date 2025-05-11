@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const useMeals = (category, mealsPage, priceFilter, sortOrder, searchQuery) => {
-    const { isPending, error, data: meals } = useQuery({
+    const { isPending, error, data: meals, refetch } = useQuery({
         queryKey: ['meals', category, mealsPage, priceFilter, sortOrder, searchQuery],
         queryFn: async () => {
             try {
@@ -15,7 +15,7 @@ const useMeals = (category, mealsPage, priceFilter, sortOrder, searchQuery) => {
         }
     });
 
-    return [isPending, error, meals];
+    return [isPending, error, meals, refetch];
 };
 
 export default useMeals;
