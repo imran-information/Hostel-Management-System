@@ -282,6 +282,7 @@ async function run() {
 
         });
 
+        // get one meal 
         app.get('/meals/:id', verifyToken, async (req, res) => {
             const { id } = req.params
             console.log(id);
@@ -292,22 +293,27 @@ async function run() {
                 res.status(500).send({ message: err.message });
             }
         })
+
         // updateOne meal data 
-        app.put('/meals/:id', async (req, res) => {
+        app.put('/meals/:id', verifyToken, verifyAdmin, async (req, res) => {
+            const { _id, ...updateMealInfo } = req.body;
+            const { id } = req.params;
+            console.log(id, updateMealInfo);
             try {
-                const updatedMeal = await Meal.findByIdAndUpdate(
-                    req.params.id,
-                    req.body,
-                    { new: true }
+                const result = await mealsCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updateMealInfo },
+                    { upsert: true }
                 );
-                res.json(updatedMeal);
+                res.status(200).json(result);
+                console.log(result);
             } catch (err) {
                 res.status(400).json({ message: err.message });
             }
         });
 
         // delete One meal data
-        app.delete('/meals/:id', async (req, res) => {
+        app.delete('/meals/:id', verifyToken, verifyAdmin, async (req, res) => {
             const { id } = req.params
             // console.log(id);
             try {
@@ -322,7 +328,6 @@ async function run() {
             const mealsCount = await mealsCollection.estimatedDocumentCount();
             res.send(mealsCount)
         })
-
 
         // liked Meal insert
         app.post('/likedMeals', verifyToken, async (req, res) => {

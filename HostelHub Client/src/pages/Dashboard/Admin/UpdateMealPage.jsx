@@ -31,15 +31,14 @@ const UpdateMealPage = () => {
 
 
     const { isLoading, error, data: mealData } = useQuery({
-        queryKey: [`meal_${id}`],
+        queryKey: [`mealData`],
         queryFn: async () => {
             try {
                 const response = await axiosSecure.get(`/meals/${id}`);
                 setFormData(response.data);
                 return response.data;
             } catch (err) {
-                toast.error('Failed to load meal data');
-                throw err;
+                toast.error('Failed to load meal data', err);
             } finally {
                 console.log("object");
             }
@@ -93,9 +92,10 @@ const UpdateMealPage = () => {
 
         try {
             toast.loading('Updating meal...', { id: 'meal-submission' });
-            await axiosSecure.put(`/meals/${mealId}`, formData);
+            const { data } = await axiosSecure.put(`/meals/${id}`, formData);
+            console.log(data);
             toast.success('Meal updated successfully!', { id: 'meal-submission' });
-            navigate('/meals'); // redirect after success
+            navigate('/dashboard/all-meals');
         } catch (error) {
             toast.error(
                 error.response?.data?.message || 'Failed to update meal.',
