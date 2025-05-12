@@ -281,6 +281,17 @@ async function run() {
             }
 
         });
+
+        app.get('/meals/:id', verifyToken, async (req, res) => {
+            const { id } = req.params
+            console.log(id);
+            try {
+                const mealData = await mealsCollection.findOne({ _id: new ObjectId(id) })
+                res.status(200).send(mealData)
+            } catch (error) {
+                res.status(500).send({ message: err.message });
+            }
+        })
         // updateOne meal data 
         app.put('/meals/:id', async (req, res) => {
             try {
@@ -294,6 +305,7 @@ async function run() {
                 res.status(400).json({ message: err.message });
             }
         });
+
         // delete One meal data
         app.delete('/meals/:id', async (req, res) => {
             const { id } = req.params

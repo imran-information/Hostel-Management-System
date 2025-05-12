@@ -58,8 +58,8 @@ const DashboardLayout = () => {
                             <li key={item.name}>
                                 <button
                                     className={`flex items-center w-full p-3 rounded-lg transition-colors ${location.pathname === item.path
-                                        ? 'bg-indigo-50 text-indigo-600'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'text-white hover:bg-indigo-600 '
                                         }`}
                                     onClick={() => {
                                         navigate(item.path);
@@ -76,7 +76,7 @@ const DashboardLayout = () => {
 
                 <div className="p-4 border-t">
                     <button
-                        className="flex items-center w-full p-3 text-gray-700 rounded-lg hover:bg-gray-100"
+                        className="flex items-center w-full p-3 text-white rounded-lg hover:bg-indigo-600"
                         onClick={handleLogout}
                     >
                         <FiLogOut className="mr-3" />

@@ -7,7 +7,7 @@ import Button from '../../shared/Button/Button';
 import toast from 'react-hot-toast';
 import { axiosSecure } from '../../../hooks/useAxiosSecure';
 import ConfirmationModal from '../../../components/Shared/Modal/ConfirmationModal';
-import UpdateMealForm from '../../../components/Dashboard/Modal/UpdateMealForm';
+import { Link } from 'react-router';
 
 const AllMeals = () => {
     // State management
@@ -20,9 +20,7 @@ const AllMeals = () => {
     const [sortConfig, setSortConfig] = useState({ key: 'title', direction: 'asc' });
     const mealsPage = true;
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isMealModalOpen, setIsMealModalOpen] = useState(false);
     const [mealIdToDelete, setMealIdToDelete] = useState(null);
-    const [updateMeal, setUpdateMeal] = useState({})
 
 
     const [isPending, error, meals, refetch] = useMeals(
@@ -33,7 +31,7 @@ const AllMeals = () => {
         searchQuery
     );
 
-    console.log(meals);
+    // console.log(meals);
 
     // clear filter Handlers 
     const resetFilters = () => {
@@ -52,21 +50,11 @@ const AllMeals = () => {
         }));
     };
 
-
-
-    const handleEdit = (meal) => {
-        setUpdateMeal(meal)
-        setIsModalOpen(true)
-    };
-
     const handleDelete = async (id) => {
         setMealIdToDelete(id)
         setIsModalOpen(true);
     };
 
-    const handleSuccess = () => {
-        // Refresh your meals list or show success message
-    };
 
     // modal confirm click to delete Meal
     const confirmDelete = async () => {
@@ -111,7 +99,7 @@ const AllMeals = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
                             <div className="relative">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <FiSearch className="absolute left-3 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Search meals..."
@@ -211,13 +199,13 @@ const AllMeals = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center space-x-3">
-                                                <button
-                                                    onClick={() => handleEdit(meal)}
-                                                    className="flex items-center px-3 py-1.5 text-sm bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors"
-                                                >
-                                                    <FiEdit2 className="mr-1.5 h-4 w-4" />
-                                                    Edit
-                                                </button>
+                                                <Link to={`/dashboard/updateMeal/${meal._id}`}>
+                                                    <button className="flex items-center px-3 py-1.5 text-sm bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition-colors"
+                                                    >
+                                                        <FiEdit2 className="mr-1.5 h-4 w-4" />
+                                                        Edit
+                                                    </button>
+                                                </Link>
                                                 <button
                                                     onClick={() => handleDelete(meal._id)}
                                                     className="flex items-center px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
@@ -243,9 +231,6 @@ const AllMeals = () => {
                 message="Are you sure you want to delete this meal? This action cannot be undone."
                 confirmText="Delete"
             />
-
-            {/* updated Meal modal  */}
-            <UpdateMealForm isOpen={isMealModalOpen} onClose={() => setIsMealModalOpen(false)} onSuccess={handleSuccess} initialData={updateMeal} />
 
         </div>
     );
