@@ -78,13 +78,16 @@ const MyPayments = () => {
         }
     };
 
-    const {user, loading} = useAuth()
+    const { user, loading } = useAuth()
     const { isPending, error, data: payments } = useQuery({
-        queryKey: ['payments', ],
-        queryFn: async() =>{
-            const {data} =await  axiosSecure()
+        queryKey: ['payments', user?.email],
+        enabled: !loading || user.email, 
+            queryFn: async () => {
+            const { data } = await axiosSecure(`/payments/${user.email}`)
+            console.log(data)
+            return data
         }
-             
+
     })
 
     if (isPending) return 'Loading...'
