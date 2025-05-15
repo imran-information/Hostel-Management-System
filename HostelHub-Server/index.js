@@ -234,6 +234,10 @@ async function run() {
             }
         });
 
+
+        
+
+
         // post a meal data 
         app.post('/meals', verifyToken, verifyAdmin, async (req, res) => {
             const mealData = req.body;
@@ -373,7 +377,7 @@ async function run() {
         });
 
 
-        // get Student/User base Meal Requests 
+        // get Student/User email  base Meal Requests 
         app.get('/meal-requests/:email', verifyToken, async (req, res) => {
             const email = req.params.email;
             console.log("Fetching meal requests for:", email);
@@ -403,11 +407,11 @@ async function run() {
             }
         })
 
-        // get Student Payments
-        app.get('/students/:id/payments', async (req, res) => {
+        // get all user/Student emails base Payments
+        app.get('/payments/:email',verifyToken, async (req, res) => {
             try {
                 const payments = await paymentsCollection.find({
-                    studentId: req.params.id
+                    customerEmail: req.params.email
                 }).sort({ date: -1 }).toArray();
                 res.json(payments);
             } catch (err) {
@@ -436,6 +440,7 @@ async function run() {
                 // console.log(err)
             }
         });
+
 
         // Enhanced Meal Features
         app.get('/meals/enhanced', async (req, res) => {
@@ -618,8 +623,6 @@ async function run() {
                 res.status(500).send({ message: 'Internal server error' });
             }
         });
-
-
 
         //  Add upcoming new meal
         app.post('/upcoming-meals', async (req, res) => {

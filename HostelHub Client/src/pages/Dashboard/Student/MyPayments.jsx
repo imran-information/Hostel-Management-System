@@ -4,43 +4,11 @@ import {
 } from '@tanstack/react-query'
 import useAuth from '../../../hooks/useAuth';
 import { axiosSecure } from '../../../hooks/useAxiosSecure';
+import Spinner from '../../shared/LoadingSpinner/Spiner';
+import toast from 'react-hot-toast';
 
 const MyPayments = () => {
-    const [payments, setPayments] = useState([
-        {
-            id: 'PAY-1001',
-            date: '2024-05-15',
-            amount: 24.99,
-            method: 'Credit Card',
-            status: 'completed', // completed, pending, failed, refunded
-            orderId: 'ORD-7890'
-        },
-        {
-            id: 'PAY-1002',
-            date: '2024-05-10',
-            amount: 18.50,
-            method: 'PayPal',
-            status: 'refunded',
-            orderId: 'ORD-6789'
-        },
-        {
-            id: 'PAY-1003',
-            date: '2024-05-05',
-            amount: 32.75,
-            method: 'Credit Card',
-            status: 'failed',
-            orderId: 'ORD-5678'
-        },
-        {
-            id: 'PAY-1004',
-            date: '2024-05-01',
-            amount: 15.99,
-            method: 'Apple Pay',
-            status: 'pending',
-            orderId: 'ORD-4567'
-        }
-    ]);
-
+    
     const getStatusBadge = (status) => {
         const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
 
@@ -90,9 +58,9 @@ const MyPayments = () => {
 
     })
 
-    if (isPending) return 'Loading...'
+    if (isPending) return <Spinner/>
 
-    if (error) return 'An error has occurred: ' + error.message
+    if (error) return  toast.error(error.message)
 
     return (
         <div className="px-4 sm:px-6 lg:px-8">

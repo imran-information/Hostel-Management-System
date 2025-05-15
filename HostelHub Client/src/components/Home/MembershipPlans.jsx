@@ -99,6 +99,8 @@ const MembershipPlans = () => {
         if (user) {
             setPrice(planPrice)
             setShowPaymentModal(true)
+            
+            
         }
         else {
             navigate('/login')
