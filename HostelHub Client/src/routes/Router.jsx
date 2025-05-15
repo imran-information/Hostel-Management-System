@@ -13,6 +13,16 @@ import UserManagement from "../pages/Dashboard/Admin/UserManagement";
 import AddMealForm from "../pages/Dashboard/Admin/AddMealFrom";
 import AllMeals from "../pages/Dashboard/Admin/AllMeals";
 import UpdateMealPage from "../pages/Dashboard/Admin/UpdateMealPage";
+import ReviewManagement from "../pages/Dashboard/Admin/ReviewManagement";
+import UpcomingMeals from "../pages/Dashboard/Admin/UpcomingMeals";
+import ServeMeals from "../pages/Dashboard/Admin/ServeMeals";
+import Profile from "../pages/Dashboard/Student/Profile";
+import PrivateRoute from "./PrivateRoute";
+import ProtectDashboard from "./ProtectDashboard";
+import MyReviews from "../pages/Dashboard/Student/MyReviews";
+import MyMealRequests from "../pages/Dashboard/Student/MyMealRequests";
+import MyPayments from "../pages/Dashboard/Student/MyPayments";
+import EnhancedMealsPage from "../pages/Dashboard/Student/EnhanceMealsPage";
 
 
 const Router = () => {
@@ -29,16 +39,26 @@ const Router = () => {
             {/* SignIn page */}
             <Route path="/login" element={<Login />} />
             {/* SignUp page  */}
-            <Route path="/signup" element={<Signup />} />
-
+            <Route path="/signup" element={<Signup />} /> 
 
             {/* Dashboard Layout */}
-            <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route path="admin-profile" element={<AdminProfile />} />
-                <Route path="user-management" element={<UserManagement />} />
-                <Route path="add-meal" element={<AddMealForm />} />
-                <Route path="all-meals" element={<AllMeals />} />
-                <Route path="updateMeal/:id" element={<UpdateMealPage />} />
+            <Route path="/dashboard" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+                {/* Admin routes */}
+                <Route path="admin-profile" element={<ProtectDashboard><AdminProfile /></ProtectDashboard>} />
+                <Route path="user-management" element={<ProtectDashboard><UserManagement /></ProtectDashboard>} />
+                <Route path="add-meal" element={<ProtectDashboard><AddMealForm /></ProtectDashboard>} />
+                <Route path="all-meals" element={<ProtectDashboard><AllMeals /></ProtectDashboard>} />
+                <Route path="updateMeal/:id" element={<ProtectDashboard><UpdateMealPage /></ProtectDashboard>} />
+                <Route path="review-management" element={<ProtectDashboard><ReviewManagement /></ProtectDashboard>} />
+                <Route path="upcoming-meals" element={<ProtectDashboard><UpcomingMeals /></ProtectDashboard>} />
+                <Route path="serve-meals" element={<ProtectDashboard><ServeMeals /></ProtectDashboard>} />
+
+                {/* Student routes  */}
+                <Route path="student-profile" element={<Profile />} />
+                <Route path="my-reviews" element={<MyReviews />} />
+                <Route path="my-requests" element={<MyMealRequests />} />
+                <Route path="my-payments" element={<MyPayments />} />
+                <Route path="enhanced-Meals" element={<EnhancedMealsPage />} />
             </Route>
 
         </Routes>

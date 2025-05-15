@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useAuth from '../../../hooks/useAuth';
 import Button from '../Button/Button';
 import { Link } from 'react-router';
+import useAdmin from '../../../hooks/useAdmin';
+import Spinner from '../LoadingSpinner/Spiner';
 
 const UserDropdown = ({ handleSignOutUser }) => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const [isAdmin, isAdminLoading] = useAdmin()
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -22,6 +25,9 @@ const UserDropdown = ({ handleSignOutUser }) => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    console.log(isAdmin)
+
 
     return (
         <div className="hidden lg:flex items-center space-x-2">
@@ -100,28 +106,62 @@ const UserDropdown = ({ handleSignOutUser }) => {
                                 </div>
 
                                 <div className="p-1">
-                                    <Link to='/dashboard/admin-profile'>
-                                        <button
-                                            className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
-                                                <path d="M7.5 0C3.36 0 0 3.36 0 7.5C0 11.64 3.36 15 7.5 15C11.64 15 15 11.64 15 7.5C15 3.36 11.64 0 7.5 0ZM7.5 2C8.33 2 9 2.67 9 3.5C9 4.33 8.33 5 7.5 5C6.67 5 6 4.33 6 3.5C6 2.67 6.67 2 7.5 2ZM7.5 13C5.99 13 4.68 12.37 3.86 11.43C3.86 10.31 6.89 9.75 7.5 9.75C8.11 9.75 11.14 10.31 11.14 11.43C10.32 12.37 9.01 13 7.5 13Z" fill="currentColor" />
-                                            </svg>
-                                            Profile
-                                        </button>
-                                    </Link> 
-                                    <Link to='/dashboard'>
-                                        <button
-                                            className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
-                                                <path d="M7.5 0L0 4V11L7.5 15L15 11V4L7.5 0ZM7.5 1.94L13 5.06L7.5 8.12L2 5.06L7.5 1.94ZM1 6.06L6.5 9.12V13.06L1 10.06V6.06ZM8.5 13.06V9.12L14 6.06V10.06L8.5 13.06Z" fill="currentColor" />
-                                            </svg>
-                                            Dashboard
-                                        </button>
-                                    </Link>
+                                    {/* Admin/Modaretor Dashboard  */}
+                                    {
+                                        isAdmin
+                                            ?
+                                            <>
+                                                <Link to={`/dashboard/admin-profile`}>
+                                                    <button
+                                                        className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
+                                                            <path d="M7.5 0C3.36 0 0 3.36 0 7.5C0 11.64 3.36 15 7.5 15C11.64 15 15 11.64 15 7.5C15 3.36 11.64 0 7.5 0ZM7.5 2C8.33 2 9 2.67 9 3.5C9 4.33 8.33 5 7.5 5C6.67 5 6 4.33 6 3.5C6 2.67 6.67 2 7.5 2ZM7.5 13C5.99 13 4.68 12.37 3.86 11.43C3.86 10.31 6.89 9.75 7.5 9.75C8.11 9.75 11.14 10.31 11.14 11.43C10.32 12.37 9.01 13 7.5 13Z" fill="currentColor" />
+                                                        </svg>
+                                                        Admin Profile
+                                                    </button>
+                                                </Link>
+                                                <Link to='/dashboard/user-management'>
+                                                    <button
+                                                        className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
+                                                            <path d="M7.5 0L0 4V11L7.5 15L15 11V4L7.5 0ZM7.5 1.94L13 5.06L7.5 8.12L2 5.06L7.5 1.94ZM1 6.06L6.5 9.12V13.06L1 10.06V6.06ZM8.5 13.06V9.12L14 6.06V10.06L8.5 13.06Z" fill="currentColor" />
+                                                        </svg>
+                                                        Admin Dashboard
+                                                    </button>
+                                                </Link>
+                                            </>
+                                            :
+                                            <>
+                                                {/* Student Dashboard  */}
+                                                <Link to={`/dashboard/student-profile`}>
+                                                    <button
+                                                        className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
+                                                            <path d="M7.5 0C3.36 0 0 3.36 0 7.5C0 11.64 3.36 15 7.5 15C11.64 15 15 11.64 15 7.5C15 3.36 11.64 0 7.5 0ZM7.5 2C8.33 2 9 2.67 9 3.5C9 4.33 8.33 5 7.5 5C6.67 5 6 4.33 6 3.5C6 2.67 6.67 2 7.5 2ZM7.5 13C5.99 13 4.68 12.37 3.86 11.43C3.86 10.31 6.89 9.75 7.5 9.75C8.11 9.75 11.14 10.31 11.14 11.43C10.32 12.37 9.01 13 7.5 13Z" fill="currentColor" />
+                                                        </svg>
+                                                        Student Profile
+                                                    </button>
+                                                </Link>
+                                                <Link to='/dashboard/user-management'>
+                                                    <button
+                                                        className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => setIsOpen(false)}
+                                                    >
+                                                        <svg className="mr-2 h-4 w-4" viewBox="0 0 15 15" fill="none">
+                                                            <path d="M7.5 0L0 4V11L7.5 15L15 11V4L7.5 0ZM7.5 1.94L13 5.06L7.5 8.12L2 5.06L7.5 1.94ZM1 6.06L6.5 9.12V13.06L1 10.06V6.06ZM8.5 13.06V9.12L14 6.06V10.06L8.5 13.06Z" fill="currentColor" />
+                                                        </svg>
+                                                        Student Dashboard
+                                                    </button>
+                                                </Link>
+                                            </>
+                                    }
+
 
 
                                     <div className="h-[1px] bg-gray-200 dark:bg-gray-700 my-1" />

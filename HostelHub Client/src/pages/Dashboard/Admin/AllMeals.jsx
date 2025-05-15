@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import useMeals from '../../../hooks/useMeals';
 import { FiFilter, FiSearch, FiX, FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import Spinner from '../../shared/LoadingSpinner/Spiner';

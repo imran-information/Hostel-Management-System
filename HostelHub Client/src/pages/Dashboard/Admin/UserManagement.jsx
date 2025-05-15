@@ -146,10 +146,10 @@ const UserManagement = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleDeleteClick(user._id)}
-                                            className="text-red-600 hover:text-red-900 mr-4"
-                                            title="Delete user"
+                                            className="flex items-center px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
                                         >
-                                            <FiTrash2 size={24} />
+                                            <FiTrash2 className="mr-1.5 h-4 w-4" />
+                                            Delete
                                         </button>
                                     </td>
                                 </tr>

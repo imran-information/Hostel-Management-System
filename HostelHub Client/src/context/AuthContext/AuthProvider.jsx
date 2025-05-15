@@ -42,25 +42,23 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
             if (currentUser?.email) {
-                setUser(currentUser)
-                console.log("current User---> ", currentUser);
+                setUser(currentUser);
                 try {
-                    const { data } = await axiosSecure.post(`/jwt`,
-                        { email: currentUser.email }
-                    );
+                    const { data } = await axiosSecure.post(`/jwt`, { email: currentUser.email });
                     console.log(data);
                 } catch (err) {
                     console.error("JWT Request Failed:", err);
                 }
-
             } else {
-                setUser(null)
-                axiosSecure.get('/logout')
+                setUser(null);
+                await axiosSecure.get('/logout');
             }
 
-            return () => unsubscribe()
-        })
-    }, [])
+            setLoading(false);  
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const userInfo = {
         user,

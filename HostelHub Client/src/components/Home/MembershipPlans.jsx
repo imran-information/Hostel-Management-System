@@ -1,8 +1,16 @@
 import { motion } from 'framer-motion';
 import { FaCrown, FaStar, FaCheck } from 'react-icons/fa';
 import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader';
+import { useNavigate } from 'react-router';
+import useAuth from '../../hooks/useAuth';
+import Payment from '../../pages/shared/Modal/Payment/Payment';
+import { useState } from 'react';
 
 const MembershipPlans = () => {
+    const { user } = useAuth()
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const navigate = useNavigate()
+    const [price, setPrice] = useState(0)
     const plans = [
         {
             name: 'Basic',
@@ -87,6 +95,16 @@ const MembershipPlans = () => {
         }
     };
 
+    const handleMembershipPlans = (planPrice) => {
+        if (user) {
+            setPrice(planPrice)
+            setShowPaymentModal(true)
+        }
+        else {
+            navigate('/login')
+        }
+    }
+
     return (
         <section className="py-16 sm:py-20 lg:py-24 bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,21 +156,32 @@ const MembershipPlans = () => {
                                     ))}
                                 </ul>
 
+
                                 <motion.button
+                                    onClick={() => handleMembershipPlans(plan.price,)}
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.98 }}
+                                    disabled={plan.price === 0}
                                     className={`w-full py-3 px-4 rounded-lg font-medium transition-all font-oswald ${plan.popular
                                         ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-800'
-                                        : 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white'
+                                        : plan.price === 0
+                                            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                                            : 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white'
                                         }`}
                                 >
-                                    Get Started
+                                    {plan.price === 0 ? 'Current Plan' : 'Get Started'}
                                 </motion.button>
+
                             </div>
                         </motion.div>
                     ))}
                 </motion.div>
             </div>
+            <Payment
+                price={price}
+                showModal={showPaymentModal}
+                setShowModal={setShowPaymentModal}
+            />
         </section>
     );
 };
