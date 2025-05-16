@@ -2,6 +2,7 @@ import { FaAward, FaUsers, FaUtensils, FaHeart, FaLeaf } from 'react-icons/fa';
 import { GiChefToque, GiCookingPot } from 'react-icons/gi';
 import { motion } from 'framer-motion'; 
 import TeamMemberCard from '../../components/TeamMemberCard/TeamMemberCard';
+import Button from '../shared/Button/Button';
 
 const About = () => {
     // Animation variants
@@ -120,7 +121,7 @@ const About = () => {
             </motion.div>
 
             {/* Our Story */}
-            <div className="container mx-auto px-4 py-20 max-w-6xl">
+            <div className="container mx-auto px-4 py-20 ">
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
@@ -139,7 +140,7 @@ const About = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                             <div className="absolute bottom-0 left-0 p-6 text-white ">
                                 <div className="flex items-center gap-2">
-                                    <FaHeart className="text-amber-400" />
+                                    <FaHeart className="text-indigo-400" />
                                     <span>Our founding team in 2018</span>
                                 </div>
                             </div>
@@ -160,9 +161,9 @@ const About = () => {
                             </p>
                         </div>
                         
-                        <div className="mt-8 p-6 bg-amber-50 rounded-xl border border-amber-100">
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-xl border border-indigo-100">
                             <div className="flex items-start gap-4">
-                                <FaAward className="text-amber-600 text-2xl mt-1 flex-shrink-0" />
+                                <FaAward className="text-indigo-600 text-2xl mt-1 flex-shrink-0" />
                                 <div>
                                     <h3 className="font-bold text-gray-800 mb-2">Our Mission</h3>
                                     <p className="text-gray-600">
@@ -176,8 +177,8 @@ const About = () => {
             </div>
 
             {/* Stats Section */}
-            <div className="bg-gray-100 py-20">
-                <div className="container mx-auto px-4 max-w-6xl">
+            <div className="bg-indigo-100 py-20">
+                <div className="container mx-auto px-4 ">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
@@ -191,7 +192,7 @@ const About = () => {
                                 variants={fadeInUp}
                                 className="bg-white p-6 rounded-xl shadow-sm text-center hover:shadow-md transition-shadow"
                             >
-                                <div className="text-amber-600 mb-4 flex justify-center">
+                                <div className="text-indigo-600 mb-4 flex justify-center">
                                     {stat.icon}
                                 </div>
                                 <h3 className="text-3xl font-bold text-gray-800 mb-2">{stat.value}</h3>
@@ -203,7 +204,7 @@ const About = () => {
             </div>
 
             {/* Team Section */}
-            <div className="container mx-auto px-4 py-20 max-w-6xl">
+            <div className="container mx-auto px-4 py-20">
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
@@ -228,8 +229,8 @@ const About = () => {
             </div>
 
             {/* Values Section */}
-            <div className="bg-indigo-600 py-20">
-                <div className="container mx-auto px-4 max-w-6xl">
+            <div className="bg-indigo-50 py-20">
+                <div className="container mx-auto px-4  ">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
@@ -237,10 +238,10 @@ const About = () => {
                         variants={staggerContainer}
                     >
                         <div className="text-center mb-16">
-                            <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white mb-4 font-oswald">
+                            <motion.h2 variants={fadeInUp} className="text-3xl font-bold  mb-4 font-oswald">
                                 Our Core Values
                             </motion.h2>
-                            <motion.p variants={fadeInUp} className="text-amber-100 max-w-2xl mx-auto text-lg">
+                            <motion.p variants={fadeInUp} className="  mx-auto text-lg">
                                 The principles that guide everything we do
                             </motion.p>
                         </div>
@@ -250,8 +251,8 @@ const About = () => {
                                 variants={fadeInUp}
                                 className="bg-white p-8 rounded-xl shadow-lg"
                             >
-                                <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-                                    <GiChefToque className="text-amber-600 text-2xl" />
+                                <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+                                    <GiChefToque className="text-indigo-600 text-2xl" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-800 mb-3">Culinary Excellence</h3>
                                 <p className="text-gray-600">
@@ -263,8 +264,8 @@ const About = () => {
                                 variants={fadeInUp}
                                 className="bg-white p-8 rounded-xl shadow-lg"
                             >
-                                <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-                                    <FaUsers className="text-amber-600 text-2xl" />
+                                <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+                                    <FaUsers className="text-indigo-600 text-2xl" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-800 mb-3">Community First</h3>
                                 <p className="text-gray-600">
@@ -276,8 +277,8 @@ const About = () => {
                                 variants={fadeInUp}
                                 className="bg-white p-8 rounded-xl shadow-lg"
                             >
-                                <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-                                    <FaLeaf className="text-amber-600 text-2xl" />
+                                <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+                                    <FaLeaf className="text-indigo-600 text-2xl" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-800 mb-3">Sustainable Practices</h3>
                                 <p className="text-gray-600">
@@ -290,26 +291,24 @@ const About = () => {
             </div>
 
             {/* CTA Section */}
-            <div className="container mx-auto px-4 py-20 max-w-4xl">
+            <div className="container mx-auto px-4 py-20 ">
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={staggerContainer}
-                    className="bg-indigo-600 rounded-2xl p-12 text-center text-white shadow-xl"
+                    className="bg-indigo-50 rounded-2xl p-12 text-center  shadow-xl"
                 >
-                    <motion.h2 variants={fadeInUp} className="text-3xl font-bold mb-4  font-oswald">
+                    <motion.h2 variants={fadeInUp} className="text-3xl font-bold mb-4 font-oswald">
                         Ready to Join the Challenge?
                     </motion.h2>
-                    <motion.p variants={fadeInUp} className="text-xl mb-8 text-amber-100 max-w-2xl mx-auto">
+                    <motion.p variants={fadeInUp} className="text-xl mb-8  max-w-2xl mx-auto">
                         Whether you're a seasoned chef or just starting out, there's a place for you in our community.
                     </motion.p>
-                    <motion.div variants={fadeInUp}>
-                        <button className="px-8 py-4 bg-white text-amber-700 rounded-xl font-bold hover:bg-gray-100 transition-all text-lg shadow-lg hover:shadow-xl">
-                            Join Now - It's Free
-                        </button>
+                    <motion.div className='flex justify-center' variants={fadeInUp}> 
+                        <Button size='large'>Join Now - It's Free</Button>
                     </motion.div>
-                </motion.div>
+                </motion.div> 
             </div>
         </div>
     );

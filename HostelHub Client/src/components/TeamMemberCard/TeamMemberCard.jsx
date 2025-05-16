@@ -24,13 +24,13 @@ const TeamMemberCard = ({ member }) => {
                 <div className="flex items-start justify-between mb-4">
                     <div>
                         <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
-                        <p className="text-amber-600 font-medium">{member.role}</p>
+                        <p className="text-indigo-600 font-medium">{member.role}</p>
                     </div>
                     <div className="flex items-center space-x-3">
                         {member.social.twitter && (
                             <a 
                                 href={member.social.twitter} 
-                                className="text-gray-400 hover:text-amber-600 transition-colors"
+                                className="text-gray-400 hover:text-indigo-600 transition-colors"
                                 aria-label={`${member.name}'s Twitter`}
                             >
                                 <FaTwitter className="text-lg" />
@@ -39,7 +39,7 @@ const TeamMemberCard = ({ member }) => {
                         {member.social.instagram && (
                             <a 
                                 href={member.social.instagram} 
-                                className="text-gray-400 hover:text-amber-600 transition-colors"
+                                className="text-gray-400 hover:text-indigo-600 transition-colors"
                                 aria-label={`${member.name}'s Instagram`}
                             >
                                 <FaInstagram className="text-lg" />
@@ -48,7 +48,7 @@ const TeamMemberCard = ({ member }) => {
                         {member.social.linkedin && (
                             <a 
                                 href={member.social.linkedin} 
-                                className="text-gray-400 hover:text-amber-600 transition-colors"
+                                className="text-gray-400 hover:text-indigo-600 transition-colors"
                                 aria-label={`${member.name}'s LinkedIn`}
                             >
                                 <FaLinkedin className="text-lg" />
@@ -63,7 +63,7 @@ const TeamMemberCard = ({ member }) => {
                     {member.skills?.map((skill, index) => (
                         <span 
                             key={index}
-                            className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium"
+                            className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium"
                         >
                             {skill}
                         </span>
