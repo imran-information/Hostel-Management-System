@@ -4,11 +4,16 @@ import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader';
 import { useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 import Payment from '../../pages/shared/Modal/Payment/Payment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { axiosSecure } from '../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast';
+import useMembership from '../../hooks/useMembership';
+import Spinner from '../../pages/shared/LoadingSpinner/Spiner';
 
 const MembershipPlans = () => {
     const { user } = useAuth()
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [membershipName, setMembershipName] = useState('');
     const navigate = useNavigate()
     const [price, setPrice] = useState(0)
     const plans = [
@@ -95,20 +100,67 @@ const MembershipPlans = () => {
         }
     };
 
-    const handleMembershipPlans = (planPrice) => {
+    const [membership, membershipLoading, refetch] = useMembership()
+
+    if (membershipLoading) return <Spinner />
+
+
+    const handleMembershipPlans = async (planPrice, membershipName) => {
         if (user) {
+            // Don't proceed if user is already on this plan
+            if (membership === membershipName) {
+                toast.error(`You're already on the ${membershipName} plan`);
+                return;
+            }
+
             setPrice(planPrice)
             setShowPaymentModal(true)
-            
-            
+            setMembershipName(membershipName)
         }
         else {
             navigate('/login')
         }
     }
 
+    // Function to determine button text and state
+    const getButtonProps = (plan) => {
+        if (!user) {
+            return {
+                text: plan.price === 0 ? 'Current Plan' : 'Get Started',
+                disabled: false
+            };
+        }
+
+        if (plan.price === 0) {
+            return {
+                text: membership === 'Basic' ? 'Current Plan' : 'Downgrade',
+                disabled: membership === 'Basic'
+            };
+        }
+
+        if (membership === plan.name) {
+            return {
+                text: 'Current Plan (You selected)',
+                disabled: true
+            };
+        }
+
+        if (membership && plan.price > 0) {
+            const currentPlanPrice = plans.find(p => p.name === membership)?.price || 0;
+            return {
+                text: plan.price > currentPlanPrice ? 'Upgrade' : 'Downgrade',
+                disabled: false
+            };
+        }
+
+        return {
+            text: 'Get Started',
+            disabled: false
+        };
+    };
+
     return (
-        <section className="py-16 sm:py-20 lg:py-24 bg-white">
+        <section id='membership-plans' className="py-16 sm:py-20 lg:py-24 bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <SectionHeader
                     title="Membership Plans"
@@ -122,67 +174,71 @@ const MembershipPlans = () => {
                     whileInView="visible"
                     viewport={{ once: true, margin: "-50px" }}
                 >
-                    {plans.map((plan, index) => (
-                        <motion.div
-                            key={index}
-                            variants={itemVariants}
-                            whileHover="hover"
-                            className={`relative rounded-xl overflow-hidden transition-all will-change-transform ${plan.popular
-                                ? 'border-2 border-yellow-400 shadow-lg'
-                                : 'border border-gray-200 shadow-md hover:shadow-lg'
-                                }`}
-                        >
-                            {plan.popular && (
-                                <div className="absolute top-0 right-0 bg-yellow-400 text-gray-800 px-3 py-1 text-xs font-bold rounded-bl-lg z-10">
-                                    MOST POPULAR
+                    {plans.map((plan, index) => {
+                        const buttonProps = getButtonProps(plan);
+
+                        return (
+                            <motion.div
+                                key={index}
+                                variants={itemVariants}
+                                whileHover="hover"
+                                className={`relative rounded-xl overflow-hidden transition-all will-change-transform ${plan.popular
+                                    ? 'border-2 border-yellow-400 shadow-lg'
+                                    : 'border border-gray-200 shadow-md hover:shadow-lg'
+                                    }`}
+                            >
+                                {plan.popular && (
+                                    <div className="absolute top-0 right-0 bg-yellow-400 text-gray-800 px-3 py-1 text-xs font-bold rounded-bl-lg z-10">
+                                        MOST POPULAR
+                                    </div>
+                                )}
+
+                                <div className="p-6 sm:p-7">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-xl font-bold text-gray-800">{plan.name}</h3>
+                                        <span className="text-2xl">{plan.icon}</span>
+                                    </div>
+
+                                    <div className="mb-6">
+                                        <span className="text-3xl font-bold text-gray-900">${plan.price}</span>
+                                        <span className="text-gray-500 text-sm">/{plan.duration}</span>
+                                    </div>
+
+                                    <ul className="space-y-3 mb-8 ">
+                                        {plan.features.map((feature, i) => (
+                                            <li key={i} className="flex items-start">
+                                                <FaCheck className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                                                <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <motion.button
+                                        onClick={() => handleMembershipPlans(plan.price, plan.name)}
+                                        whileHover={{ scale: 1.03 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        disabled={buttonProps.disabled}
+                                        className={`w-full py-3 px-4 rounded-lg font-medium transition-all font-oswald ${plan.popular
+                                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-800'
+                                            : buttonProps.disabled
+                                                ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                                                : 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white'
+                                            }`}
+                                    >
+                                        {buttonProps.text}
+                                    </motion.button>
                                 </div>
-                            )}
-
-                            <div className="p-6 sm:p-7">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-xl font-bold text-gray-800">{plan.name}</h3>
-                                    <span className="text-2xl">{plan.icon}</span>
-                                </div>
-
-                                <div className="mb-6">
-                                    <span className="text-3xl font-bold text-gray-900">${plan.price}</span>
-                                    <span className="text-gray-500 text-sm">/{plan.duration}</span>
-                                </div>
-
-                                <ul className="space-y-3 mb-8 ">
-                                    {plan.features.map((feature, i) => (
-                                        <li key={i} className="flex items-start">
-                                            <FaCheck className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                                            <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-
-                                <motion.button
-                                    onClick={() => handleMembershipPlans(plan.price,)}
-                                    whileHover={{ scale: 1.03 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    disabled={plan.price === 0}
-                                    className={`w-full py-3 px-4 rounded-lg font-medium transition-all font-oswald ${plan.popular
-                                        ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-800'
-                                        : plan.price === 0
-                                            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                                            : 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white'
-                                        }`}
-                                >
-                                    {plan.price === 0 ? 'Current Plan' : 'Get Started'}
-                                </motion.button>
-
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        );
+                    })}
                 </motion.div>
             </div>
             <Payment
                 price={price}
                 showModal={showPaymentModal}
                 setShowModal={setShowPaymentModal}
+                membershipName={membershipName}
+                refetch={refetch}
             />
         </section>
     );

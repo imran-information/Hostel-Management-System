@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useQuery  } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import { axiosSecure } from "../../../hooks/useAxiosSecure";
 import { toast } from 'react-hot-toast';
 import ConfirmationModal from '../../../components/Shared/Modal/ConfirmationModal';
+import SectionHeader from '../../shared/SectionHeader/SectionHeader';
 
 const MyReviews = () => {
     const { user, loading } = useAuth();
@@ -25,11 +26,6 @@ const MyReviews = () => {
         }
     });
 
-    // console.log(reviews)
-
-
-
-
     const handleReviewEditClick = (review) => {
         setReviewForm({
             rating: review.rating,
@@ -37,8 +33,6 @@ const MyReviews = () => {
         });
         setIsEditingReview(review._id);
     };
-
-
 
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
@@ -68,15 +62,11 @@ const MyReviews = () => {
         }
     };
 
-    // Delete a review
     const handleDeleteReview = async (reviewId) => {
-        // console.log(reviewId);
         setReviewId(reviewId)
         setIsModalOpen(true)
     };
 
-
-    // modal confirm click to delete Meal
     const confirmDelete = async () => {
         try {
             const loadingToast = toast.loading('Deleting review...');
@@ -98,53 +88,69 @@ const MyReviews = () => {
 
     const renderStars = (rating) => {
         return Array(5).fill(0).map((_, i) => (
-            <span key={i} className={i < rating ? 'text-yellow-400' : 'text-gray-300'}>
+            <span key={i} className={i < rating ? 'text-yellow-500' : 'text-gray-300'}>
                 ★
             </span>
         ));
     };
 
     return (
-        <div className="container mx-auto py-8">
-            {/* Reviews Section */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-gray-800">My Reviews</h2>
-                    <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        {reviews.length} reviews
-                    </span>
-                </div>
-
+        <div className="container mx-auto  py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden pt-8">
+                <SectionHeader
+                    title="My Reviews"
+                    subtitle={`${reviews.length} ${reviews.length === 1 ? 'review' : 'reviews'}`}
+                />
                 {reviews.length === 0 ? (
-                    <div className="text-center py-8">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    <div className="text-center py-12">
+                        <svg
+                            className="mx-auto h-16 w-16 text-gray-300"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                            />
                         </svg>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No reviews yet</h3>
-                        <p className="mt-1 text-sm text-gray-500">You haven't written any reviews.</p>
+                        <h3 className="mt-4 text-lg font-medium text-gray-700">No reviews yet</h3>
+                        <p className="mt-2 text-gray-500">You haven't written any reviews.</p>
                     </div>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                         {reviews.map((review) => (
-                            <div key={review._id} className="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0">
+                            <div
+                                key={review._id}
+                                className="border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow bg-gray-100"
+                            >
                                 {isEditingReview === review._id ? (
                                     <form onSubmit={(e) => handleReviewSubmit(e, review._id)} className="space-y-4">
-                                        <div>
-                                            <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Rating
-                                            </label>
-                                            <select
-                                                id="rating"
-                                                name="rating"
-                                                value={reviewForm.rating}
-                                                onChange={handleReviewChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                                required
-                                            >
-                                                {[1, 2, 3, 4, 5].map((num) => (
-                                                    <option key={num} value={num}>{num} Star{num !== 1 ? 's' : ''}</option>
-                                                ))}
-                                            </select>
+                                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            <div>
+                                                <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Rating
+                                                </label>
+                                                <select
+                                                    id="rating"
+                                                    name="rating"
+                                                    value={reviewForm.rating}
+                                                    onChange={handleReviewChange}
+                                                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
+                                                    required
+                                                >
+                                                    {[1, 2, 3, 4, 5].map((num) => (
+                                                        <option key={num} value={num}>{num} Star{num !== 1 ? 's' : ''}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="flex items-end">
+                                                <div className="text-xl">
+                                                    {renderStars(reviewForm.rating)}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div>
                                             <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
@@ -155,49 +161,51 @@ const MyReviews = () => {
                                                 name="comment"
                                                 value={reviewForm.comment}
                                                 onChange={handleReviewChange}
-                                                rows={3}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                rows={4}
+                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3 border"
                                                 required
                                             />
                                         </div>
-                                        <div className="flex space-x-3 pt-2">
-                                            <button
-                                                type="submit"
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-
-
-                                            > Save Changes
-
-                                            </button>
+                                        <div className="flex justify-end space-x-3 pt-2">
                                             <button
                                                 type="button"
                                                 onClick={() => setIsEditingReview(null)}
-                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                                                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                             >
                                                 Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                            >
+                                                Save Changes
                                             </button>
                                         </div>
                                     </form>
                                 ) : (
-                                    <>
-                                        <div className="flex items-start justify-between">
+                                    <div className="space-y-3 h-full flex flex-col">
+                                        <div className="flex justify-between items-start">
                                             <div>
-                                                <div className="flex items-center">
-                                                    <div className="text-lg mr-2">
+                                                <h3 className="text-lg font-medium text-gray-900 line-clamp-1">
+                                                    {review.mealName || 'Untitled Review'}
+                                                </h3>
+                                                <div className="flex items-center mt-1 space-x-2">
+                                                    <div className="flex text-lg">
                                                         {renderStars(review.rating)}
                                                     </div>
                                                     <span className="text-sm text-gray-500">
-                                                        {<p>{review.date && new Date(review.date).toLocaleDateString()}</p>}
+                                                        {review.date && new Date(review.date).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
                                                     </span>
                                                 </div>
-                                                <h4 className="mt-1 text-sm font-medium text-gray-900">
-                                                    {review.mealName || 'Untitled Review'}
-                                                </h4>
                                             </div>
                                             <div className="flex space-x-2">
                                                 <button
                                                     onClick={() => handleReviewEditClick(review)}
-                                                    className="p-1 text-blue-500 hover:text-blue-700"
+                                                    className="text-gray-400 hover:text-blue-500 transition-colors"
                                                     title="Edit review"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -206,7 +214,7 @@ const MyReviews = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteReview(review._id)}
-                                                    className="p-1 text-red-500 hover:text-red-700"
+                                                    className="text-gray-400 hover:text-red-500 transition-colors"
                                                     title="Delete review"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -215,17 +223,17 @@ const MyReviews = () => {
                                                 </button>
                                             </div>
                                         </div>
-                                        <p className="mt-2 text-sm text-gray-600">
+                                        <p className="text-gray-700 mt-3 line-clamp-3 flex-grow">
                                             {review.comment}
                                         </p>
-                                    </>
+                                    </div>
                                 )}
                             </div>
                         ))}
                     </div>
                 )}
             </div>
-            {/* Confirmation Modal */}
+
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -233,6 +241,7 @@ const MyReviews = () => {
                 title="Delete Review"
                 message="Are you sure you want to delete this review? This action cannot be undone."
                 confirmText="Delete"
+                confirmColor="red"
             />
         </div>
     );

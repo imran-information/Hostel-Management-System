@@ -172,6 +172,31 @@ async function run() {
             }
         })
 
+        // update User/student profile
+        app.patch('/users/:email', verifyToken, async (req, res) => {
+            const { email } = req.params;
+            const { displayName, photo } = req.body;  
+            console.log(email, displayName, photo);
+
+            try {
+                const result = await usersCollection.updateOne(
+                    { email: email },  
+                    { $set: { displayName: displayName, photo: photo } },
+                    { upsert: true }
+                );
+
+                if (result.modifiedCount === 0) {
+                    return res.status(404).send({ error: 'User not found or no changes made' });
+                }
+
+                res.status(200).send(result);
+            } catch (error) {
+                console.error('Error updating user:', error);
+                res.status(500).send({ error: 'Internal server error' });
+            }
+        });
+
+
         // update User/student role  
         app.patch('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
             const { id } = req.params;
@@ -192,6 +217,7 @@ async function run() {
             }
         });
 
+
         // delete user/student 
         app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
             const { id } = req.params
@@ -204,19 +230,7 @@ async function run() {
             }
         })
 
-        // get one user/Student 
-        // app.get('/users', verifyToken, async (req, res) => {
-        //     const { email } = req.query
-        //     console.log(email)
-
-        //     try {
-        //         const student = await usersCollection.findOne({ email });
-        //         res.json(student);
-        //     } catch (err) {
-        //         res.status(500).json({ error: err.message });
-        //     }
-        // });
-
+        // get one user/Student  
         app.get('/users/:email', verifyToken, async (req, res) => {
             const { email } = req.params;
             console.log(email)
@@ -235,7 +249,27 @@ async function run() {
         });
 
 
-        
+        // user/student membership status change 
+        app.patch('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const { membership } = req.body;
+            try {
+                const student = await usersCollection.findOne({ email });
+
+                if (!student) {
+                    return res.status(404).send({ message: 'User not found' });
+                }
+
+                const result = await usersCollection.updateOne(
+                    { email },
+                    { $set: { membership } }
+                );
+
+                res.json(result);
+            } catch (err) {
+                res.status(500).send({ error: 'Internal server error' });
+            }
+        });
 
 
         // post a meal data 
@@ -356,6 +390,29 @@ async function run() {
             }
         });
 
+        // post a meal requests
+        app.post('/meal-requests', verifyToken, async (req, res) => {
+            const { newMealRequest } = req.body;
+            const { id, userEmail, userName, mealName, quantity, status, requestedAt } = newMealRequest;
+
+            const existingRequest = await mealRequestsCollection.findOne({
+                _id: new ObjectId(id),
+                userEmail
+            });
+
+            if (existingRequest) {
+                return res.status(409).send('You already have an active request for this meal');
+            }
+
+            try {
+                const result = await mealRequestsCollection.insertOne({ _id: new ObjectId(id), userEmail, userName, mealName, quantity, status, requestedAt })
+                res.status(200).send(result)
+
+            } catch (error) {
+                res.status(500).send({ error: err.message });
+            }
+        })
+
         // Get all meal requests with filtering
         app.get('/meal-requests', async (req, res) => {
             try {
@@ -408,7 +465,7 @@ async function run() {
         })
 
         // get all user/Student emails base Payments
-        app.get('/payments/:email',verifyToken, async (req, res) => {
+        app.get('/payments/:email', verifyToken, async (req, res) => {
             try {
                 const payments = await paymentsCollection.find({
                     customerEmail: req.params.email
@@ -524,7 +581,7 @@ async function run() {
             }
         });
 
-        // liked Meal insert
+        // liked Meal insert Don`t okey 
         app.post('/likedMeals', verifyToken, async (req, res) => {
             try {
                 const { mealId, email } = req.body;
@@ -535,35 +592,88 @@ async function run() {
                 });
 
                 if (alreadyLiked) {
-                    return res.status(409).json({ error: 'Meal already liked' });
+                    return res.status(409).send({ error: 'Meal already liked' });
                 }
 
-                // Create new liked meal 
-                const newLikedMeal = {
+                //  Insert into database
+                const result = await likedMealsCollection.insertOne({
                     _id: new ObjectId(mealId),
                     email,
-                };
-
-                // 6. Insert into database
-                const result = await likedMealsCollection.insertOne(newLikedMeal);
-
-                // 7. Update meal's likes count
-                await mealsCollection.updateOne(
-                    { _id: new ObjectId(mealId) },
-                    { $inc: { likesCount: 1 } }
-                );
-
-                // 8. Return success response
-                res.status(201).json({
-                    message: 'Meal liked successfully',
-                    likedId: result.insertedId
                 });
+                // //  Update meal's likes count
+                // await mealsCollection.updateOne(
+                //     { _id: new ObjectId(mealId) },
+                //     { $inc: { likesCount: 1 } }
+                // );
+
+                res.status(201).send(result);
 
             } catch (error) {
                 console.error('Error liking meal:', error);
                 res.status(500).json({ error: 'Internal server error' });
             }
         });
+
+        // POST one review
+        app.post('/reviews', verifyToken, async (req, res) => {
+            const { rating, comment, mealName, id, name, email } = req.body;
+
+            try {
+                const existingReview = await reviewsCollection.findOne({
+                    _id: new ObjectId(id),
+                    email: email
+                });
+
+                if (existingReview) {
+                    return res.status(409).send('You have already reviewed this meal');
+                }
+
+                const newReview = {
+                    rating: parseInt(rating),
+                    comment: comment || '',
+                    mealName,
+                    _id: new ObjectId(id),
+                    name,
+                    email,
+                    date: new Date().toISOString()
+                };
+
+                // 4. Insert the review
+                const result = await reviewsCollection.insertOne(newReview);
+                res.status(201).send({
+                    message: 'Review submitted successfully',
+                    reviewId: result.insertedId
+                });
+
+            } catch (error) {
+                console.error('Review submission error:', error);
+                res.status(500).json({
+                    error: 'Failed to submit review',
+                    details: error.message
+                });
+            }
+        });
+
+        // Helper function to update meal's average rating
+        async function updateMealRating(mealId) {
+            const reviews = await reviewsCollection.find({
+                mealId: new ObjectId(mealId)
+            }).toArray();
+
+            if (reviews.length > 0) {
+                const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+
+                await mealsCollection.updateOne(
+                    { _id: new ObjectId(mealId) },
+                    {
+                        $set: {
+                            rating: parseFloat(avgRating.toFixed(1)),
+                            reviewCount: reviews.length
+                        }
+                    }
+                );
+            }
+        }
 
         // Get all reviews  
         app.get('/reviews', verifyToken, verifyAdmin, async (req, res) => {

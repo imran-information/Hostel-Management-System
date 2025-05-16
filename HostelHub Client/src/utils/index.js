@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from 'react-hot-toast';
+import { axiosSecure } from "../hooks/useAxiosSecure";
 
 export const saveUserData = async (user) => {
     const newUser = {
@@ -70,3 +71,15 @@ const getGoogleAuthErrorMessage = (error) => {
 
     return errorMap[error.code] || error.message || defaultMessage;
 };
+
+
+export const mealRequest = async (newMealRequest) => {
+    const { data } = await axiosSecure.post('/meal-requests', {
+        newMealRequest: newMealRequest
+    })
+    // console.log(data)
+    return data
+
+
+}
+

@@ -23,6 +23,7 @@ import MyReviews from "../pages/Dashboard/Student/MyReviews";
 import MyMealRequests from "../pages/Dashboard/Student/MyMealRequests";
 import MyPayments from "../pages/Dashboard/Student/MyPayments";
 import EnhancedMealsPage from "../pages/Dashboard/Student/EnhanceMealsPage";
+import About from "../pages/About/About";
 
 
 const Router = () => {
@@ -35,6 +36,7 @@ const Router = () => {
                 <Route path="/food-safety" element={<FoodSafety />} />
                 <Route path="/social-impact" element={<SocialImpact />} />
                 <Route path="/cooking-challenge" element={<CookingChallenge />} />
+                <Route path="/about" element={<About/>} />
             </Route>
             {/* SignIn page */}
             <Route path="/login" element={<Login />} />

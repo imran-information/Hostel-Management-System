@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const stripePromise = loadStripe(import.meta.env.VITE_stripe_publishable_key);
 
-const Payment = ({ price, showModal, setShowModal }) => {
+const Payment = ({ price, showModal, setShowModal, membershipName , refetch}) => {
     if (!showModal) return null;
 
 
@@ -81,6 +81,8 @@ const Payment = ({ price, showModal, setShowModal }) => {
                                 price={price}
                                 setShowModal={setShowModal}
                                 onSuccess={() => setShowModal(false)}
+                                membershipName={membershipName}
+                                refetch={refetch}
                             />
                         </Elements>
                     </div>

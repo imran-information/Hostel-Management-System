@@ -12,10 +12,57 @@ import { FaUtensils, FaStar, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../../pages/shared/Button/Button';
+import useAuth from '../../../hooks/useAuth';
+import { axiosSecure } from '../../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast';
 
-const MealModal = ({ meal, children }) => {
-    const [isFavorite, setIsFavorite] = useState(false);
+const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
+    // const [isFavorite, setIsFavorite] = useState(false);
     const [open, setOpen] = useState(false);
+    const { user } = useAuth()
+
+    const [review, setReview] = useState({
+        rating: 0,
+        comment: '',
+        mealName: meal.title,
+        id: meal._id,
+
+
+    });
+
+    const [hoverRating, setHoverRating] = useState(0);
+
+    const handleReviewSubmit = async () => {
+        try {
+            const newReview = {
+                ...review,
+                name: user?.displayName,
+                email: user?.email,
+            };
+
+            // Send to 
+            const { data } = await axiosSecure.post('reviews', newReview);
+            console.log(data)
+            if (data.reviewId) {
+                // Reset form
+                setReview({
+                    rating: 0,
+                    comment: '',
+                    mealName: meal.title
+                });
+                setHoverRating(0); 
+                toast.success('Review submitted successfully!');
+                refetch()
+            }
+        } catch (error) {
+            console.log(error.request.response)
+            if (error?.request?.response) { 
+                toast.error(error?.request?.response);
+                return
+            }
+            toast.error('Failed to submit review');
+        }
+    };
 
     return (
         <DialogRoot open={open} onOpenChange={setOpen}>
@@ -49,7 +96,7 @@ const MealModal = ({ meal, children }) => {
                                         {meal.title}
                                     </DialogTitle>
                                     <div className="flex items-center space-x-4">
-                                        <button
+                                        {/* <button
                                             onClick={() => setIsFavorite(!isFavorite)}
                                             className="text-gray-500 hover:text-red-500 transition-colors"
                                             aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
@@ -59,7 +106,7 @@ const MealModal = ({ meal, children }) => {
                                             ) : (
                                                 <FaRegHeart />
                                             )}
-                                        </button>
+                                        </button> */}
                                         <DialogClose className="text-gray-500 hover:text-gray-700 transition-colors">
                                             <Cross2Icon className="h-5 w-5" />
                                         </DialogClose>
@@ -143,16 +190,77 @@ const MealModal = ({ meal, children }) => {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: 0.4 }}
                                             >
-                                                <Button className='w-full'>Request This Meal</Button>
+
+                                                {user && (
+                                                    <Button
+                                                        onClick={() => handleMealRequest({ id: meal._id, mealName: meal.title })}
+                                                        className='w-full'
+                                                    >
+                                                        Request This Meal
+                                                    </Button>
+                                                )}
+
                                             </motion.div>
                                         </motion.div>
                                     </div>
+                                    {/* Review Form */}
+                                    {user && (
+                                        <div className="mt-5 ">
+                                            <h4 className="font-medium text-2xl text-center text-gray-900 mb-2">Review</h4>
+
+                                            <div className="mb-3">
+                                                <label className="block text-sm font-medium text-gray-700 mb-1 text-center">
+                                                    Rating
+                                                </label>
+                                                <div className="flex justify-center">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <button
+                                                            key={star}
+                                                            type="button"
+                                                            onClick={() => setReview({ ...review, rating: star })}
+                                                            onMouseEnter={() => setHoverRating(star)}
+                                                            onMouseLeave={() => setHoverRating(0)}
+                                                        >
+                                                            <FaStar
+                                                                className={`h-6 w-6 ${star <= (hoverRating || review.rating)
+                                                                    ? 'text-yellow-400'
+                                                                    : 'text-gray-300'
+                                                                    }`}
+                                                            />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Comment
+                                                </label>
+                                                <textarea
+                                                    rows={3}
+                                                    className="w-full px-3 py-2 border rounded-md"
+                                                    value={review.comment}
+                                                    onChange={(e) => setReview({ ...review, comment: e.target.value })}
+                                                />
+                                            </div>
+
+                                            <Button
+                                                onClick={handleReviewSubmit}
+                                                disabled={review.rating === 0 || review.comment.length == 0}
+                                                className="w-full"
+                                            >
+                                                Submit Review
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         </DialogContent>
                     </DialogPortal>
                 )}
             </AnimatePresence>
+
+
         </DialogRoot>
     );
 };

@@ -5,7 +5,7 @@ import useAuth from '../../../../hooks/useAuth';
 import Spinner from '../../LoadingSpinner/Spiner';
 import toast from 'react-hot-toast';
 
-const CheckOutForm = ({ price, setShowModal }) => {
+const CheckOutForm = ({ price, setShowModal, membershipName: membership, refetch }) => {
     const stripe = useStripe();
     const elements = useElements();
     const { user } = useAuth();
@@ -67,22 +67,31 @@ const CheckOutForm = ({ price, setShowModal }) => {
             if (paymentIntent.status === "succeeded") {
                 //  payment data  
                 const paymentData = {
-                    id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,  
-                    date: new Date().toISOString().split('T')[0],  
-                    amount: price,  
-                    method: 'Card',  
+                    id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+                    date: new Date().toISOString().split('T')[0],
+                    amount: price,
+                    method: 'Card',
                     status: 'completed',
-                    orderId: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,  
-                    transactionId: paymentIntent.id, 
+                    orderId: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+                    transactionId: paymentIntent.id,
                     customerEmail: user?.email || "guest@example.com"
                 };
- 
-                toast.success("Payment successful!");
 
+                toast.success("Payment successful!");
                 //  Save to database 
                 try {
                     await axiosSecure.post('/payments', paymentData);
                     toast.success("Payment  saved!");
+
+                    const { data } = await axiosSecure.patch(`/user/${user.email}`, {
+                        membership: membership
+                    });
+
+                    if (data.modifiedCount === 1) {
+                        toast.success("Membership status changed successfully");
+                        refetch()
+                    }
+
                 } catch (error) {
                     console.error("Failed to save payment:", error);
                     toast.error("Payment succeeded but record failed to save");

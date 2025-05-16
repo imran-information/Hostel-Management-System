@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
     // manage user  
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async currentUser => {
-            if (currentUser?.email) {
+            if (currentUser?.email) { 
                 setUser(currentUser);
                 try {
                     const { data } = await axiosSecure.post(`/jwt`, { email: currentUser.email });
@@ -53,8 +53,8 @@ const AuthProvider = ({ children }) => {
                 setUser(null);
                 await axiosSecure.get('/logout');
             }
-
             setLoading(false);  
+
         });
 
         return () => unsubscribe();

@@ -10,7 +10,7 @@ const MealCategories = () => {
     const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'All'];
     const [activeCategory, setActiveCategory] = useState('All');
     const mealsPage = false;
-    const [isPending, error, meals] = useMeals(activeCategory, mealsPage);
+    const [isPending, error, meals, refetch] = useMeals(activeCategory, mealsPage);
 
     if (error) {
         return (
@@ -60,7 +60,7 @@ const MealCategories = () => {
             ) : meals && meals.length > 0 ? (
                 <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                     {meals.map((meal) => (
-                        <MealCard key={meal._id} meal={meal} />
+                        <MealCard refetch={refetch} key={meal._id} meal={meal} />
                     ))}
                 </div>
             ) : (
