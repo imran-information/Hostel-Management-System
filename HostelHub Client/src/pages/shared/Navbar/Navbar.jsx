@@ -4,10 +4,7 @@ import logo from '../../../assets/logo/logo-transparent.png';
 import Button from '../Button/Button';
 import useAuth from '../../../hooks/useAuth';
 import toast from 'react-hot-toast';
-import { FiLogOut, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
-import { Avatar } from '@radix-ui/themes';
-import { LogOutIcon, UserIcon } from 'lucide-react';
-import { DashboardIcon } from '@radix-ui/react-icons';
+import { FiLogOut, FiCheckCircle, FiAlertCircle } from 'react-icons/fi'; 
 import { motion, AnimatePresence } from 'framer-motion';
 import UserDropdown from './UserDropdown';
 

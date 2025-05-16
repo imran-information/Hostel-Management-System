@@ -12,7 +12,9 @@ const UserDropdown = ({ handleSignOutUser }) => {
     const dropdownRef = useRef(null);
     const [isAdmin, isAdminLoading] = useAdmin()
 
-    // Close dropdown when clicking outside
+    console.log(user)
+
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -42,18 +44,19 @@ const UserDropdown = ({ handleSignOutUser }) => {
                         aria-expanded={isOpen}
                     >
                         <div className="relative">
-                            <img
-                                src={user.photoURL || '/default-avatar.png'}
-                                alt={user.displayName || 'User'}
-                                className="w-8 h-8 rounded-full cursor-pointer hover:opacity-80 transition-opacity duration-300 object-cover"
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = '/default-avatar.png';
-                                }}
-                            />
-                            {!user.photoURL && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-gray-600 rounded-full text-sm font-medium text-white">
-                                    {user.displayName?.charAt(0) || 'U'}
+                            {user?.photoURL ? (
+                                <img
+                                    src={user.photoURL}
+                                    alt={user.displayName || 'User'}
+                                    className="w-8 h-8 rounded-full cursor-pointer hover:opacity-80 transition-opacity duration-300 object-cover border-2"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.style.display = 'none';
+                                    }}
+                                />
+                            ) : (
+                                <div className="w-8 h-8 flex items-center justify-center bg-gray-600 rounded-full text-sm font-medium text-white">
+                                    {user?.displayName?.charAt(0) || 'U'}
                                 </div>
                             )}
                         </div>
@@ -81,20 +84,15 @@ const UserDropdown = ({ handleSignOutUser }) => {
                                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                                     <div className="flex items-center space-x-3">
                                         <div className="relative">
-                                            <img
-                                                src={user.photoURL || '/default-avatar.png'}
-                                                alt={user.displayName || 'User'}
-                                                className="w-10 h-10 rounded-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = '/default-avatar.png';
-                                                }}
-                                            />
-                                            {!user.photoURL && (
-                                                <div className="absolute inset-0 flex items-center justify-center bg-gray-600 rounded-full text-sm font-medium text-white">
-                                                    {user.displayName?.charAt(0) || 'U'}
-                                                </div>
-                                            )}
+                                            {
+                                                user?.photoURL && <img
+                                                    src={user?.photoURL}
+                                                    alt={user.displayName}
+                                                    className="w-10 h-10 rounded-full object-cover"
+
+                                                />
+                                            }
+
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-900 dark:text-white">{user.displayName || 'User'}</p>
@@ -148,7 +146,7 @@ const UserDropdown = ({ handleSignOutUser }) => {
                                                         Student Profile
                                                     </button>
                                                 </Link>
-                                                <Link to='/dashboard/user-management'>
+                                                <Link to='/dashboard/my-reviews'>
                                                     <button
                                                         className="w-full text-left text-sm leading-none rounded flex items-center h-9 px-2 relative select-none outline-none text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                                         onClick={() => setIsOpen(false)}
@@ -161,8 +159,6 @@ const UserDropdown = ({ handleSignOutUser }) => {
                                                 </Link>
                                             </>
                                     }
-
-
 
                                     <div className="h-[1px] bg-gray-200 dark:bg-gray-700 my-1" />
 
