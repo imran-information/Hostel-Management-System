@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:5173', 'https://hostel-hub-beta.vercel.app'],
     credentials: true
 }));
 app.use(express.json());
@@ -46,7 +46,7 @@ const client = new MongoClient(uri, {
 // Database connection  
 async function run() {
     try {
-        await client.db("admin").command({ ping: 1 });
+
         const db = client.db('hostelHub');
         // Get collections
         const mealsCollection = db.collection('meals');
@@ -511,7 +511,7 @@ async function run() {
                     return res.status(200).send({ message: 'Meal served successfully', result });
                 }
                 if (result.modifiedCount === 1 && status === 'Cancelled') {
-                    return res.status(200).send({  message: "Meal request cancelled" });
+                    return res.status(200).send({ message: "Meal request cancelled" });
                 }
             } catch (err) {
                 res.status(500).send({ error: err.message });
