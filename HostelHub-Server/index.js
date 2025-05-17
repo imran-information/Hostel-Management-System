@@ -175,12 +175,12 @@ async function run() {
         // update User/student profile
         app.patch('/users/:email', verifyToken, async (req, res) => {
             const { email } = req.params;
-            const { displayName, photo } = req.body;  
+            const { displayName, photo } = req.body;
             console.log(email, displayName, photo);
 
             try {
                 const result = await usersCollection.updateOne(
-                    { email: email },  
+                    { email: email },
                     { $set: { displayName: displayName, photo: photo } },
                     { upsert: true }
                 );
@@ -414,19 +414,17 @@ async function run() {
         })
 
         // Get all meal requests with filtering
-        app.get('/meal-requests', async (req, res) => {
+        app.get('/meal-requests', verifyToken, verifyAdmin, async (req, res) => {
             try {
-                const { status, studentId } = req.query;
-
+                const { status, email } = req.query;
                 const query = {};
                 if (status) query.status = status;
-                if (studentId) query.studentId = studentId;
+                if (email) query.email = email;
 
                 const requests = await mealRequestsCollection
                     .find(query)
                     .sort({ requestedAt: -1 })
                     .toArray();
-
                 res.status(200).json(requests);
             } catch (err) {
                 res.status(500).json({ error: err.message });
@@ -498,31 +496,27 @@ async function run() {
             }
         });
 
-
-        // Enhanced Meal Features
-        app.get('/meals/enhanced', async (req, res) => {
+        // Update serving status admin
+        app.patch('/meal-requests/:id', verifyToken, verifyAdmin, async (req, res) => {
             try {
-                const { search, category, minPrice, maxPrice } = req.query;
-                const query = {};
+                const { id } = req.params;
+                const { status } = req.body;
 
-                if (search) query.$text = { $search: search };
-                if (category) query.category = category;
-                if (minPrice || maxPrice) {
-                    query.price = {};
-                    if (minPrice) query.price.$gte = Number(minPrice);
-                    if (maxPrice) query.price.$lte = Number(maxPrice);
+                const result = await mealRequestsCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: { status: status, } }
+                );
+
+                if (result.modifiedCount === 1 && status === 'Completed') {
+                    return res.status(200).send({ message: 'Meal served successfully', result });
                 }
-
-                const meals = await mealsCollection.find(query)
-                    .project({ reviews: { $slice: 3 } })
-                    .toArray();
-
-                res.json(meals);
+                if (result.modifiedCount === 1 && status === 'Cancelled') {
+                    return res.status(200).send({  message: "Meal request cancelled" });
+                }
             } catch (err) {
-                res.status(500).json({ error: err.message });
+                res.status(500).send({ error: err.message });
             }
         });
-
 
         // Update serving status student
         app.patch('/meal-requests/:id', verifyToken, async (req, res) => {
@@ -654,27 +648,6 @@ async function run() {
             }
         });
 
-        // Helper function to update meal's average rating
-        async function updateMealRating(mealId) {
-            const reviews = await reviewsCollection.find({
-                mealId: new ObjectId(mealId)
-            }).toArray();
-
-            if (reviews.length > 0) {
-                const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
-
-                await mealsCollection.updateOne(
-                    { _id: new ObjectId(mealId) },
-                    {
-                        $set: {
-                            rating: parseFloat(avgRating.toFixed(1)),
-                            reviewCount: reviews.length
-                        }
-                    }
-                );
-            }
-        }
-
         // Get all reviews  
         app.get('/reviews', verifyToken, verifyAdmin, async (req, res) => {
             try {
@@ -750,34 +723,32 @@ async function run() {
             }
         });
 
-        // 2. Get upcoming meals with like filtering
+        //   Get upcoming meals with like filtering
         app.get('/upcoming-meals', async (req, res) => {
             const { minLikes, sortBy } = req.query;
-            console.log(minLikes, sortBy);
 
             try {
-                const meals = await upcomingMealsCollection.find().toArray();
+                let query = {};
+                if (minLikes) {
+                    query.likesCount = { $gte: parseInt(minLikes) };
+                }
+                let sortOption = {};
+                if (sortBy === 'likes') {
+                    sortOption = { likesCount: -1 };
+                } else if (sortBy === 'date') {
+                    sortOption = { createdAt: -1 };
+                }
+                const meals = await upcomingMealsCollection
+                    .find(query)
+                    .sort(sortOption)
+                    .toArray();
+
                 res.status(200).send(meals);
             } catch (err) {
                 res.status(500).send({ error: err.message });
             }
         });
 
-        // 3. Like a meal
-        app.post('/upcoming-meals/:id', async (req, res) => {
-            try {
-                const mealId = new ObjectId(req.params.id);
-
-                await upcomingMealsCollection.updateOne(
-                    { _id: mealId },
-                    { $inc: { likes: 1 } }
-                );
-
-                res.status(200).json({ success: true });
-            } catch (err) {
-                res.status(500).json({ error: err.message });
-            }
-        });
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {

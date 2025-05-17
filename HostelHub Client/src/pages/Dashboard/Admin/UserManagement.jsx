@@ -5,6 +5,7 @@ import { FiSearch, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import Spinner from '../../shared/LoadingSpinner/Spiner';
 import toast from 'react-hot-toast';
 import ConfirmationModal from '../../../components/Shared/Modal/ConfirmationModal';
+import SectionHeader from '../../shared/SectionHeader/SectionHeader';
 
 const UserManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -81,9 +82,11 @@ const UserManagement = () => {
     if (isError) return <div className="text-red-500 text-center mt-8">Error: {error.message}</div>;
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="container mx-auto bg-white p-6 rounded-lg shadow-md mt-5">
+            <SectionHeader title={"User Management"} subtitle={"Manage all  User Management"} />
+
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <h2 className="text-2xl font-bold text-gray-800">User Management</h2>
+                <h2 className="text-2xl font-bold text-gray-800"></h2>
                 <div className="relative w-full md:w-64">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <FiSearch className="text-gray-400" />

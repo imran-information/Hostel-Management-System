@@ -5,6 +5,7 @@ import Button from '../../shared/Button/Button';
 import toast from 'react-hot-toast';
 import { axiosSecure } from '../../../hooks/useAxiosSecure';
 import axios from 'axios';
+import SectionHeader from '../../shared/SectionHeader/SectionHeader';
 
 const AddMealForm = () => {
     const [formData, setFormData] = useState({
@@ -103,12 +104,9 @@ const AddMealForm = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-2xl font-bold text-gray-800">Add New Meal</h2>
-                    <p className="text-gray-600 mt-1">Fill in the details to add a new meal to the menu</p>
-                </div>
+        <div className="container mx-auto py-6">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden"> 
+                <SectionHeader title={"Add New Meal"} subtitle={"Fill in the details to add a new meal to the menu"} /> 
 
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
