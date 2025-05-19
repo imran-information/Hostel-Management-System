@@ -49,14 +49,14 @@ const ProfileUpdateModal = ({ isOpen, onClose, student = {}, isLoading }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData)
+        // console.log(formData)
         await updateProfileUser(formData.displayName, formData.photo)
        const {data} =  await axiosSecure.patch(`/users/${student?.email}`, {
             displayName: formData.displayName,
             photo: formData.photo
         });
 
-        console.log(data)
+        // console.log(data)
         if (data.modifiedCount) {
             toast.success('Uploaded info successfully!');
         }

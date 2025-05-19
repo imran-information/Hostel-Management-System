@@ -25,15 +25,15 @@ const ServeMeals = () => {
     });
 
 
-    console.log(searchEmail)
+    // console.log(searchEmail)
  
 
 
     const handleStatusChange = async (id, newStatus) => {
-        console.log(id, newStatus)
+        // console.log(id, newStatus)
         try {
             const { data } = await axiosSecure.patch(`/meal-requests/${id}`, { status: newStatus })
-            console.log(data)
+            // console.log(data)
 
             if (data.result?.modifiedCount) {
                 toast.success('Meal Served Successfully')
@@ -43,7 +43,7 @@ const ServeMeals = () => {
             await refetch()
         } catch (error) {
             toast.error('Something went wrong while updating the status')
-            console.error(error)
+            // console.error(error)
         }
     }
 

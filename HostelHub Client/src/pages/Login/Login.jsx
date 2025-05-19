@@ -29,7 +29,7 @@ const Login = () => {
     const navigate = useNavigate()
     const location = useLocation();
 
-    console.log(location);
+    // console.log(location);
 
     const {
         register,
@@ -54,7 +54,7 @@ const Login = () => {
             });
 
             const result = await loginUser(email, password);
-            console.log('Logged in user:', result.user);
+            // console.log('Logged in user:', result.user);
             await saveUserData(result.user)
             // Update to success
             toast.success('Login successful!', {
@@ -107,7 +107,7 @@ const Login = () => {
     const handleGoogleLogin = async () => {
         const user = await onGoogleSignup(googleSignInUser, setIsLoading, setLoginError, navigate, location)
         await saveUserData(user)
-        console.log(user);
+        // console.log(user);
     }
 
     return (

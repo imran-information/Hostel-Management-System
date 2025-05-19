@@ -9,7 +9,7 @@ export const saveUserData = async (user) => {
         photo: user.photoURL
     }
     const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}/users`, newUser)
-    console.log(newUser, data);
+    // console.log(newUser, data);
     return data;
 }
 

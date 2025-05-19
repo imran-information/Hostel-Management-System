@@ -52,7 +52,7 @@ const MealCard = ({ meal,refetch }) => {
     // };
 
     const handleMealRequest = async ({ id, mealName }) => {
-        console.log('clicked')
+        // console.log('clicked')
         if (!user) {
             navigate('/login', {
                 state: { from: location.pathname },

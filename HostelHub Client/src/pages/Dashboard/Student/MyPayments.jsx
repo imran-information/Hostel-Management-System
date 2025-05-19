@@ -53,7 +53,7 @@ const MyPayments = () => {
         enabled: !loading || user.email,
         queryFn: async () => {
             const { data } = await axiosSecure(`/payments/${user.email}`)
-            console.log(data)
+            // console.log(data)
             return data
         }
 

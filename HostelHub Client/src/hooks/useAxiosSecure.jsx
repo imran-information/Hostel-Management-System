@@ -15,7 +15,7 @@ const useAxiosSecure = () => {
     // Add a response interceptor
     useEffect(() => {
         axios.interceptors.response.use((response) => {
-            console.log('Response from axios interceptor.', response);
+            // console.log('Response from axios interceptor.', response);
             return response;
         }, async (error) => {
             if (error.response?.status === 401 || error.response === 403) {

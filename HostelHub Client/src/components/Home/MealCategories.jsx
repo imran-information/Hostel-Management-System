@@ -12,13 +12,16 @@ const MealCategories = () => {
     const mealsPage = false;
     const [isPending, error, meals, refetch] = useMeals(activeCategory, mealsPage);
 
+    // console.log(meals)
+
+
     if (error) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4">Failed to load meals</h2>
                 <p className="text-red-500 text-sm sm:text-base">Please try again later</p>
             </div>
-        );
+        ); 
     }
 
     return (

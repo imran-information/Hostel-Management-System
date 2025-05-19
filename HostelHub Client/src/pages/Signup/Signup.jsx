@@ -117,7 +117,7 @@ const Signup = () => {
     const handleGoogleSignup = async () => {
         const user = await onGoogleSignup(googleSignInUser, setIsLoading, setSignupError, navigate, location)
         await saveUserData(user)
-        console.log(user);
+        // console.log(user);
     }
 
     const togglePasswordVisibility = (field) => {

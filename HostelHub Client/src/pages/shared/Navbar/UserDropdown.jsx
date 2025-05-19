@@ -12,7 +12,7 @@ const UserDropdown = ({ handleSignOutUser }) => {
     const dropdownRef = useRef(null);
     const [isAdmin, isAdminLoading] = useAdmin()
 
-    console.log(user)
+    // console.log(user)
 
 
     useEffect(() => {
@@ -28,7 +28,7 @@ const UserDropdown = ({ handleSignOutUser }) => {
         };
     }, []);
 
-    console.log(isAdmin)
+    // console.log(isAdmin)
 
 
     return (

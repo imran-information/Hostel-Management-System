@@ -45,7 +45,7 @@ const UpdateMealPage = () => {
         }
     });
 
-    console.log(mealData);
+    // console.log(mealData);
 
     if (isLoading) return <Spinner />
 
@@ -93,7 +93,7 @@ const UpdateMealPage = () => {
         try {
             toast.loading('Updating meal...', { id: 'meal-submission' });
             const { data } = await axiosSecure.put(`/meals/${id}`, formData);
-            console.log(data);
+            // console.log(data);
             toast.success('Meal updated successfully!', { id: 'meal-submission' });
             navigate('/dashboard/all-meals');
         } catch (error) {

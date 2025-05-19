@@ -42,7 +42,7 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
 
             // Send to 
             const { data } = await axiosSecure.post('reviews', newReview);
-            console.log(data)
+            // console.log(data)
             if (data.reviewId) {
                 // Reset form
                 setReview({
@@ -55,7 +55,7 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                 refetch()
             }
         } catch (error) {
-            console.log(error.request.response)
+            // console.log(error.request.response)
             if (error?.request?.response) { 
                 toast.error(error?.request?.response);
                 return

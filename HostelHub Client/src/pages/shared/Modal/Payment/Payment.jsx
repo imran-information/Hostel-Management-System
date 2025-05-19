@@ -25,7 +25,7 @@ const Payment = ({ price, showModal, setShowModal, membershipName , refetch}) =>
                 toast.success("Copy successful!");
             })
             .catch(err => {
-                console.log('Failed to copy: ', err);
+                // console.log('Failed to copy: ', err);
             });
     };
 

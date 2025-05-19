@@ -19,11 +19,11 @@ app.use(cookieParser())
 const verifyToken = (req, res, next) => {
     const token = req.cookies?.token;
     if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: Token not found' });
+        return res.status(401).send({ message: 'Unauthorized: Token not found' });
     }
     jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: 'Unauthorized: Token is invalid or expired' });
+            return res.status(401).send({ message: 'Unauthorized: Token is invalid or expired' });
         }
         req.user = decoded;
         next();
@@ -56,17 +56,16 @@ async function run() {
         const reviewsCollection = db.collection('reviews');
         const mealRequestsCollection = db.collection('mealRequests');
         const paymentsCollection = db.collection('payments')
+
         // MIDDLEWARE
         // admin check 
         const verifyAdmin = async (req, res, next) => {
             try {
-                const email = req.user?.email;
-                if (!email) {
-                    return res.status(401).send({ error: 'Unauthorized: No user email found' });
-                }
-
-                const user = await usersCollection.findOne({ email });
-                if (!user || user.role !== 'admin') {
+                const email = req.user.email;
+                const query = { email: email }
+                const user = await usersCollection.findOne(query);
+                const isAdmin = user.role === 'admin'
+                if (!isAdmin) {
                     return res.status(403).send({ error: 'Forbidden: Admins only' });
                 }
 
@@ -92,9 +91,8 @@ async function run() {
             res
                 .cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV !== 'development',
-                    sameSite: 'strict',
-                    maxAge: 15 * 24 * 60 * 60 * 1000
+                    secure: process.env.NODE_ENV !== 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
                 })
                 .send({ success: true });
         });
@@ -103,25 +101,26 @@ async function run() {
         app.get('/logout', (req, res) => {
             res.clearCookie('token', {
                 httpOnly: true,
-                secure: process.env.NODE_ENV !== 'development',
-                sameSite: 'strict',
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             });
             res.send('signOut JWT', { success: true });
         });
 
-        // get admin
-        app.get('/user/admin', verifyToken, async (req, res) => {
-            const { email } = req.query;
-            if (!email) {
-                return res.status(400).send({ error: 'Email is required' });
-            }
-
+        // get admin && check if user is admin
+        app.get('/user/admin/:email', verifyToken, async (req, res) => {
+            const email = req.params.email;
             try {
-                const admin = await usersCollection.findOne({ email });
-                if (admin?.role === 'admin') {
-                    return res.status(200).send({ isAdmin: true, admin });
+                if (email !== req.user.email) {
+                    return res.status(400).send({ message: 'unauthorized access' });
                 }
-                return res.status(200).send({ isAdmin: false });
+                const user = await usersCollection.findOne({ email: email });
+                let isAdmin = false;
+
+                if (user.role === 'admin') {
+                    isAdmin = true;
+                }
+                return res.status(200).send({ isAdmin });
             } catch (error) {
                 return res.status(500).send({ error: 'Internal server error' });
             }
@@ -238,13 +237,13 @@ async function run() {
                 const student = await usersCollection.findOne({ email });
 
                 if (!student) {
-                    return res.status(404).json({ message: 'User not found' });
+                    return res.status(404).send({ message: 'User not found' });
                 }
 
-                res.json(student);
+                res.send(student);
             } catch (err) {
                 console.error('Error fetching user:', err);
-                res.status(500).json({ error: 'Internal server error' });
+                res.status(500).send({ error: 'Internal server error' });
             }
         });
 
@@ -265,7 +264,7 @@ async function run() {
                     { $set: { membership } }
                 );
 
-                res.json(result);
+                res.send(result);
             } catch (err) {
                 res.status(500).send({ error: 'Internal server error' });
             }
@@ -371,10 +370,10 @@ async function run() {
                     { $set: updateMealInfo },
                     { upsert: true }
                 );
-                res.status(200).json(result);
+                res.status(200).send(result);
                 console.log(result);
             } catch (err) {
-                res.status(400).json({ message: err.message });
+                res.status(400).send({ message: err.message });
             }
         });
 
@@ -425,9 +424,9 @@ async function run() {
                     .find(query)
                     .sort({ requestedAt: -1 })
                     .toArray();
-                res.status(200).json(requests);
+                res.status(200).send(requests);
             } catch (err) {
-                res.status(500).json({ error: err.message });
+                res.status(500).send({ error: err.message });
             }
         });
 
