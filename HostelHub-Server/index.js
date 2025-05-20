@@ -76,7 +76,7 @@ async function run() {
             }
         };
 
-
+ 
         // JWT Sign 
         app.post('/jwt', async (req, res) => {
             const { email } = req.body;
@@ -91,8 +91,8 @@ async function run() {
             res
                 .cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV !== 'production',
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                    secure: process.env.NODE_ENV === 'production', 
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
                 })
                 .send({ success: true });
         });
@@ -102,10 +102,11 @@ async function run() {
             res.clearCookie('token', {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             });
-            res.send('signOut JWT', { success: true });
+            res.send({ success: true, message: 'Signed out' });
         });
+
 
         // get admin && check if user is admin
         app.get('/user/admin/:email', verifyToken, async (req, res) => {

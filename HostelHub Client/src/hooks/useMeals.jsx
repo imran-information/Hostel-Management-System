@@ -7,7 +7,9 @@ const useMeals = (category, mealsPage, priceFilter, sortOrder, searchQuery) => {
         queryKey: ['meals', category, mealsPage, priceFilter, sortOrder, searchQuery],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/meals?category=${category}&mealsPage=${mealsPage}&priceFilter=${priceFilter}&sortOrder=${sortOrder}&searchQuery=${searchQuery}`);;
+                const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/meals?category=${category}&mealsPage=${mealsPage}&priceFilter=${priceFilter}&sortOrder=${sortOrder}&searchQuery=${searchQuery}`, {
+                    withCredentials: true,
+                });
                 return response.data;
             } catch (error) {
                 throw new Error(error.response?.data?.message || 'Failed to fetch meals');
@@ -18,4 +20,4 @@ const useMeals = (category, mealsPage, priceFilter, sortOrder, searchQuery) => {
     return [isPending, error, meals, refetch];
 };
 
-export default useMeals;
+export default useMeals;  
