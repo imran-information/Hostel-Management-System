@@ -8,28 +8,24 @@ import {
     Close as DialogClose
 } from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { FaUtensils, FaStar, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaUtensils, FaStar } from 'react-icons/fa';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../../pages/shared/Button/Button';
 import useAuth from '../../../hooks/useAuth';
 import { axiosSecure } from '../../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
+import { ShoppingCart } from 'lucide-react';
 
 const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
-    // const [isFavorite, setIsFavorite] = useState(false);
     const [open, setOpen] = useState(false);
-    const { user } = useAuth()
-
+    const { user } = useAuth();
     const [review, setReview] = useState({
         rating: 0,
         comment: '',
         mealName: meal.title,
         id: meal._id,
-
-
     });
-
     const [hoverRating, setHoverRating] = useState(0);
 
     const handleReviewSubmit = async () => {
@@ -40,25 +36,21 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                 email: user?.email,
             };
 
-            // Send to 
             const { data } = await axiosSecure.post('reviews', newReview);
-            // console.log(data)
             if (data.reviewId) {
-                // Reset form
                 setReview({
                     rating: 0,
                     comment: '',
                     mealName: meal.title
                 });
-                setHoverRating(0); 
+                setHoverRating(0);
                 toast.success('Review submitted successfully!');
-                refetch()
+                refetch();
             }
         } catch (error) {
-            // console.log(error.request.response)
-            if (error?.request?.response) { 
+            if (error?.request?.response) {
                 toast.error(error?.request?.response);
-                return
+                return;
             }
             toast.error('Failed to submit review');
         }
@@ -79,38 +71,25 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <DialogOverlay className="fixed inset-0 bg-black/50 z-50" />
+                            <DialogOverlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
                         </motion.div>
 
                         <DialogContent asChild forceMount>
                             <motion.div
-                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl z-50 overflow-y-auto"
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] bg-white rounded-xl shadow-2xl z-50 overflow-y-auto"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 20 }}
                                 transition={{ duration: 0.3, ease: 'easeOut' }}
                             >
                                 {/* Header */}
-                                <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center z-10">
-                                    <DialogTitle className="text-xl font-bold text-gray-900">
+                                <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-indigo-500 p-4 flex justify-between items-center z-10">
+                                    <DialogTitle className="text-xl font-bold text-white">
                                         {meal.title}
                                     </DialogTitle>
-                                    <div className="flex items-center space-x-4">
-                                        {/* <button
-                                            onClick={() => setIsFavorite(!isFavorite)}
-                                            className="text-gray-500 hover:text-red-500 transition-colors"
-                                            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                                        >
-                                            {isFavorite ? (
-                                                <FaHeart className="text-red-500" />
-                                            ) : (
-                                                <FaRegHeart />
-                                            )}
-                                        </button> */}
-                                        <DialogClose className="text-gray-500 hover:text-gray-700 transition-colors">
-                                            <Cross2Icon className="h-5 w-5" />
-                                        </DialogClose>
-                                    </div>
+                                    <DialogClose className="text-white hover:text-indigo-200 transition-colors">
+                                        <Cross2Icon className="h-5 w-5" />
+                                    </DialogClose>
                                 </div>
 
                                 {/* Content */}
@@ -119,7 +98,7 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                         {/* Left Column - Image */}
                                         <div className="space-y-4">
                                             <motion.div
-                                                className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden"
+                                                className="relative aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden shadow-md"
                                                 initial={{ opacity: 0, scale: 0.95 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 transition={{ delay: 0.1 }}
@@ -130,19 +109,28 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                                     className="w-full h-full object-cover"
                                                     loading="lazy"
                                                 />
+                                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center space-x-2 text-white">
+                                                            <FaStar className="text-yellow-400" />
+                                                            <span className="font-medium">{meal.rating || '4.5'}</span>
+                                                            <span className="text-sm text-white/80">
+                                                                ({meal.reviews?.length || 0} reviews)
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-2xl font-bold text-white">
+                                                            ${meal.price.toFixed(2)}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </motion.div>
 
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center space-x-2">
-                                                    <FaStar className="text-yellow-400" />
-                                                    <span className="font-medium">{meal.rating || '4.5'}</span>
-                                                    <span className="text-gray-500 text-sm">
-                                                        ({meal.reviews?.length || 0} reviews)
-                                                    </span>
-                                                </div>
-                                                <span className="text-2xl font-bold text-indigo-600">
-                                                    ${meal.price.toFixed(2)}
-                                                </span>
+                                            <div className="bg-indigo-50 p-4 rounded-lg">
+                                                <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
+                                                    <FaUtensils className="text-indigo-600 mr-2" />
+                                                    Distributor
+                                                </h3>
+                                                <p className="text-gray-700">{meal.distributor}</p>
                                             </div>
                                         </div>
 
@@ -153,12 +141,12 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: 0.2 }}
                                         >
-                                            <div>
+                                            <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
                                                 <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
                                                 <p className="text-gray-600">{meal.description}</p>
                                             </div>
 
-                                            <div>
+                                            <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
                                                 <h3 className="font-semibold text-gray-900 mb-3">Ingredients</h3>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {meal.ingredients?.map((ingredient, index) => (
@@ -176,43 +164,39 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <h3 className="font-semibold text-gray-900 mb-2">Distributor</h3>
-                                                <div className="flex items-center">
-                                                    <FaUtensils className="text-gray-400 mr-2" />
-                                                    <span className="text-gray-600">{meal.distributor}</span>
-                                                </div>
-                                            </div>
-
-                                            <motion.div
-                                                className="pt-4"
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.4 }}
-                                            >
-
-                                                {user && (
-                                                    <Button
+                                            {user && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ delay: 0.4 }}
+                                                >
+                                                    <Button iconPosition='right' icon={<ShoppingCart/>}
                                                         onClick={() => handleMealRequest({ id: meal._id, mealName: meal.title })}
-                                                        className='w-full'
+                                                        className="w-full py-3 text-lg"
+                                                        variant="primary"
                                                     >
-                                                        Request This Meal
+                                                        Request This Meal 
                                                     </Button>
-                                                )}
-
-                                            </motion.div>
+                                                </motion.div>
+                                            )}
                                         </motion.div>
                                     </div>
+
                                     {/* Review Form */}
                                     {user && (
-                                        <div className="mt-5 ">
-                                            <h4 className="font-medium text-2xl text-center text-gray-900 mb-2">Review</h4>
+                                        <motion.div 
+                                            className="mt-8 bg-gray-50 p-6 rounded-xl"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.5 }}
+                                        >
+                                            <h4 className="text-xl font-semibold text-gray-900 mb-4 text-center">Leave a Review</h4>
 
-                                            <div className="mb-3">
-                                                <label className="block text-sm font-medium text-gray-700 mb-1 text-center">
-                                                    Rating
+                                            <div className="mb-4">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                                                    How would you rate this meal?
                                                 </label>
-                                                <div className="flex justify-center">
+                                                <div className="flex justify-center space-x-2">
                                                     {[1, 2, 3, 4, 5].map((star) => (
                                                         <button
                                                             key={star}
@@ -220,9 +204,10 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                                             onClick={() => setReview({ ...review, rating: star })}
                                                             onMouseEnter={() => setHoverRating(star)}
                                                             onMouseLeave={() => setHoverRating(0)}
+                                                            className="transition-transform hover:scale-125"
                                                         >
                                                             <FaStar
-                                                                className={`h-6 w-6 ${star <= (hoverRating || review.rating)
+                                                                className={`h-8 w-8 ${star <= (hoverRating || review.rating)
                                                                     ? 'text-yellow-400'
                                                                     : 'text-gray-300'
                                                                     }`}
@@ -232,26 +217,28 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="mb-3">
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                    Comment
+                                            <div className="mb-4">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Your Review
                                                 </label>
                                                 <textarea
-                                                    rows={3}
-                                                    className="w-full px-3 py-2 border rounded-md"
+                                                    rows={4}
+                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                                                     value={review.comment}
                                                     onChange={(e) => setReview({ ...review, comment: e.target.value })}
+                                                    placeholder="Share your experience with this meal..."
                                                 />
                                             </div>
 
                                             <Button
                                                 onClick={handleReviewSubmit}
-                                                disabled={review.rating === 0 || review.comment.length == 0}
-                                                className="w-full"
+                                                disabled={review.rating === 0 || review.comment.length === 0}
+                                                className="w-full py-3"
+                                                variant="primary"
                                             >
                                                 Submit Review
                                             </Button>
-                                        </div>
+                                        </motion.div>
                                     )}
                                 </div>
                             </motion.div>
@@ -259,8 +246,6 @@ const MealModal = ({ meal, children, handleMealRequest, refetch }) => {
                     </DialogPortal>
                 )}
             </AnimatePresence>
-
-
         </DialogRoot>
     );
 };

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import useMeals from '../../hooks/useMeals';
 import MealCard from './MealCard';
-import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader';
-import MealCardSkeleton from './MealCardSkeletion';
+import SectionHeader from '../../pages/shared/SectionHeader/SectionHeader'; 
 import Button from '../../pages/shared/Button/Button';
 import { ArrowBigRight } from 'lucide-react';
+import MealCardSkeleton from './MealCardSkeletion';
 
 const MealCategories = () => {
     const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'All'];
@@ -12,38 +12,33 @@ const MealCategories = () => {
     const mealsPage = false;
     const [isPending, error, meals, refetch] = useMeals(activeCategory, mealsPage);
 
-    // console.log(meals)
-
-
     if (error) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
                 <h2 className="text-2xl sm:text-3xl font-bold mb-4">Failed to load meals</h2>
                 <p className="text-red-500 text-sm sm:text-base">Please try again later</p>
             </div>
-        ); 
+        );
     }
 
     return (
-        <section className="container mx-auto sm:px-6 px-4 xl:px-0  py-8 sm:py-12 lg:py-16">
+        <section className="container mx-auto sm:px-6 px-4 xl:px-0 py-8 sm:py-12 lg:py-16">
             <SectionHeader
                 title="Our Meal Categories"
                 subtitle="Discover delicious meals prepared fresh daily for our hostel residents."
             />
 
-            {/* Category Tabs */}
+            {/* Category Tabs - Using your custom Button component */}
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 md:mb-10">
                 {categories.map((category) => (
-                    <button
+                    <Button
                         key={category}
                         onClick={() => setActiveCategory(category)}
-                        className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm md:text-base font-medium transition-all duration-200 ${activeCategory === category
-                            ? 'bg-indigo-600 text-white shadow-md hover:shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
+                        variant={activeCategory === category ? 'primary' : 'ghost'} 
+                        className={`rounded-full ${activeCategory === category ? 'shadow-md hover:shadow-lg' : ''}`}
                     >
                         {category}
-                    </button>
+                    </Button>
                 ))}
             </div>
 
@@ -77,11 +72,19 @@ const MealCategories = () => {
                 </div>
             )}
 
-            {
-                meals && <div className=" flex justify-center mt-5">
-                    <Button to='/meals' icon={<ArrowBigRight />} iconPosition='right' size='large'>View All Meals</Button>
+            {meals && (
+                <div className="flex justify-center mt-8">
+                    <Button
+                        to='/meals'
+                        icon={<ArrowBigRight />}
+                        iconPosition='right'
+                        size='large'
+                        className="shadow-lg hover:shadow-xl transition-shadow"
+                    >
+                        View All Meals
+                    </Button>
                 </div>
-            }
+            )}
         </section>
     );
 };
