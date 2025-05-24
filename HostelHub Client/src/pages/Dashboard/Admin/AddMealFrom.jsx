@@ -17,7 +17,8 @@ const AddMealForm = () => {
         image: null,
         ingredients: [],
         distributor: '',
-        likesCount: 0
+        likesCount: 0,
+        status: '',
 
     });
     const [isUploading, setIsUploading] = useState(false);
@@ -88,6 +89,7 @@ const AddMealForm = () => {
                 image: null,
                 ingredients: [],
                 distributor: '',
+                status: ''
 
             });
             setNewIngredient('');
@@ -105,8 +107,8 @@ const AddMealForm = () => {
 
     return (
         <div className="container mx-auto py-6">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden"> 
-                <SectionHeader title={"Add New Meal"} subtitle={"Fill in the details to add a new meal to the menu"} /> 
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <SectionHeader title={"Add New Meal"} subtitle={"Fill in the details to add a new meal to the menu"} />
 
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -156,7 +158,7 @@ const AddMealForm = () => {
                                     className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all appearance-none pr-8"
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                >
+                                > 
                                     <option value="">Select Category</option>
                                     <option value="breakfast">Breakfast</option>
                                     <option value="lunch">Lunch</option>
@@ -170,7 +172,7 @@ const AddMealForm = () => {
                         {/* Distributor */}
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-gray-700">
-                                Distributor
+                                Distributor <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -184,7 +186,7 @@ const AddMealForm = () => {
                         {/* Rating */}
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-gray-700">
-                                Rating
+                                Rating <span className="text-red-500">*</span>
                             </label>
                             <div className="flex items-center space-x-4">
                                 <input
@@ -202,10 +204,30 @@ const AddMealForm = () => {
                             </div>
                         </div>
 
+                        {/* Coming or Upcoming Category Selector */}
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Status <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <select
+                                    required
+                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all appearance-none pr-8"
+                                    value={formData.status}
+                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                >
+                                    <option value="">Select Status</option>
+                                    <option value="coming">Coming</option>
+                                    <option value="upcoming">Upcoming</option>
+                                </select>
+                                <FiChevronDown className="absolute right-3 top-3.5 text-gray-400" />
+                            </div>
+                        </div>
+
                         {/* Ingredients */}
                         <div className="md:col-span-2 space-y-2">
                             <label className="block text-sm font-medium text-gray-700">
-                                Ingredients
+                                Ingredients <span className="text-red-500">*</span>
                             </label>
                             <div className="flex flex-wrap gap-2 mb-2">
                                 {formData.ingredients?.map((ingredient, index) => (

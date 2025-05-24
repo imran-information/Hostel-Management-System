@@ -4,7 +4,7 @@ import logo from '../../../assets/logo/logo-transparent.png';
 import Button from '../Button/Button';
 import useAuth from '../../../hooks/useAuth';
 import toast from 'react-hot-toast';
-import { FiLogOut, FiCheckCircle, FiAlertCircle } from 'react-icons/fi'; 
+import { FiLogOut, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import UserDropdown from './UserDropdown';
 
@@ -126,37 +126,15 @@ const Navbar = () => {
 
     return (
         <header className={`fixed top-0 w-full z-50 transition-all duration-500 backdrop-filter ${isScrolled ? 'bg-black/80 backdrop-blur-sm shadow-sm py-2' : 'bg-transparent py-4'}`}>
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 lg:px-0">
                 <div className="flex items-center justify-between">
-                    {/* Logo - Visible on all screens */}
-                    <Link to='/' className="flex items-center">
+                    {/* Logo - Hidden on mobile */}
+                    <Link to='/' className="hidden lg:flex items-center">
                         <img className='w-40 lg:w-60' src={logo} alt="Logo" />
                     </Link>
 
-                    {/* Desktop Navigation - Hidden on mobile */}
-                    <nav className="hidden lg:flex items-center space-x-1">
-                        <ul className={`flex space-x-5 text-white font-bold font-oswald text-lg`}>
-                            {links}
-                        </ul>
-                    </nav>
-
-                    {/* Mobile Menu Button - Hidden on desktop */}
-                    <div className="flex items-center lg:hidden space-x-4">
-                        {user ? (
-                            <div className="lg:hidden">
-                                <UserDropdown handleSignOutUser={handleSignOutUser} />
-                            </div>
-                        ) : (
-                            <div className="flex space-x-2">
-                                <Button isOutline variant="secondary" to="/login" size="sm">
-                                    Login
-                                </Button>
-                                <Button to="/signup" size="sm">
-                                    Sign Up
-                                </Button>
-                            </div>
-                        )}
-
+                    {/* Mobile Menu Button - Left side on mobile */}
+                    <div className="flex lg:hidden items-center">
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="p-2 text-white rounded-lg focus:outline-none"
@@ -174,9 +152,33 @@ const Navbar = () => {
                         </button>
                     </div>
 
-                    {/* Desktop Auth Buttons - Hidden on mobile */}
-                    <div className="hidden lg:flex">
-                        <UserDropdown handleSignOutUser={handleSignOutUser} />
+                    {/* Desktop Navigation - Hidden on mobile */}
+                    <nav className="hidden lg:flex items-center space-x-1">
+                        <ul className={`flex space-x-5 text-white font-bold font-oswald text-lg`}>
+                            {links}
+                        </ul>
+                    </nav>
+
+                    {/* Auth Buttons/Dropdown - Always shown on right side */}
+                    <div className="flex items-center space-x-4">
+                        {user ? (
+                            <>
+                                {/* Show UserDropdown on both mobile and desktop when logged in */}
+                                <UserDropdown handleSignOutUser={handleSignOutUser} />
+                            </>
+                        ) : (
+                            <>
+                                {/* Mobile - Always show buttons */}
+                                <div className="flex space-x-2">
+                                    <Button isOutlet variant='outline' className='text-white' to="/login"  >
+                                        Login
+                                    </Button>
+                                    <Button to="/signup"  >
+                                        Sign Up
+                                    </Button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -203,26 +205,6 @@ const Navbar = () => {
                                         </motion.li>
                                     ))}
                                 </ul>
-                                {!user && (
-                                    <div className="px-4 pt-4 space-y-3 border-t border-gray-700">
-                                        <Button
-                                            fullWidth
-                                            isOutline
-                                            variant="secondary"
-                                            to='/login'
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Login
-                                        </Button>
-                                        <Button
-                                            fullWidth
-                                            to='/signup'
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Sign Up
-                                        </Button>
-                                    </div>
-                                )}
                             </div>
                         </motion.div>
                     )}

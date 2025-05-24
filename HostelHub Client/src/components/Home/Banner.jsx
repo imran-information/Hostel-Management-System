@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Button from '../../pages/shared/Button/Button';
-import { ArrowUpRightFromSquare } from 'lucide-react';
+import { ArrowUpRightFromSquare } from 'lucide-react'; 
 
 const Banner = () => {
     const slides = [
@@ -21,7 +21,7 @@ const Banner = () => {
             subtitle: "Unlock exclusive benefits including priority booking and special menus",
             image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80",
             category: "Explore Plans",
-            link: "/membership",
+            link: "#membership-plans",
             badge: "Popular",
             ctaText: "Join Now"
         },
@@ -31,7 +31,7 @@ const Banner = () => {
             subtitle: "Modern rooms designed for productivity and relaxation",
             image: "https://images.unsplash.com/photo-1653204280036-c272f16ec7ed?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             category: "Book Now",
-            link: "/booking",
+            link: "/dashboard/my-requests",
             badge: "Limited Availability",
             ctaText: "View Rooms"
         },
@@ -41,7 +41,7 @@ const Banner = () => {
             subtitle: "Dedicated assistance for all your hostel needs",
             image: "https://images.unsplash.com/photo-1610208385141-601c7503eb10?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             category: "Get Help",
-            link: "/support",
+            link: "/about",
             badge: "New Service",
             ctaText: "Contact Us"
         }
@@ -101,10 +101,29 @@ const Banner = () => {
                             <h1 className="text-4xl sm:text-5xl md:text-7xl font-oswald font-bold mb-4 animate-fadeInUp">
                                 {slide.title}
                             </h1>
-                            <p className="text-xl sm:text-2xl mb-8 max-w-2xl  animate-fadeInUp delay-100 font-poppins">
+                            <p className="text-xl sm:text-2xl mb-8 max-w-2xl animate-fadeInUp delay-100 font-poppins">
                                 {slide.subtitle}
                             </p>
-                            <Button to={slide.link} size='large' iconPosition='right' icon={<ArrowUpRightFromSquare />} >{slide.category}</Button>
+                            {slide.id === 2 ? (  
+                                <Button
+                                    to={slide.link} 
+                                    variant="primary"
+                                    size="large"
+                                    icon={<ArrowUpRightFromSquare />}
+                                    iconPosition="right"
+                                >
+                                    Join Now
+                                </Button>
+                            ) : (
+                                <Button
+                                    to={slide.link}
+                                    size='large'
+                                    iconPosition='right'
+                                    icon={<ArrowUpRightFromSquare />}
+                                >
+                                    {slide.category}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 ))}

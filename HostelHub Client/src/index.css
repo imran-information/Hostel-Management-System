@@ -9,43 +9,45 @@
 
 .nav-link {
   position: relative;
-  padding: 0.5rem 0.5rem;
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
 
-
-.nav-link {
-  color: white;
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #6366f1;
+  transition: width 0.3s ease;
 }
 
 .nav-link:hover {
   color: #6366f1;
 }
 
+.nav-link:hover::after {
+  width: calc(100% - 1rem); /* Accounts for padding */
+}
+
 .nav-link.active {
   color: #4f46e5;
-  font-weight: 500;
 }
 
-.nav-link-indicator {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  height: 2px;
-  width: 1rem;
-  transform: translateX(-50%);
-  transition: all 0.3s ease;
-}
-
-.nav-link-indicator {
-  background-color: transparent;
-}
-
-.nav-link:hover .nav-link-indicator {
-  background-color: #6366f1;
-}
-
-.nav-link.active .nav-link-indicator {
+.nav-link.active::after {
+  width: calc(100% - 1rem);
   background-color: #4f46e5;
+}
+
+/* Subtle hover effect */
+.nav-link:hover {
+  transform: translateY(-1px);
 }
 

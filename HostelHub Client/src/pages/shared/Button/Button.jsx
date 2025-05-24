@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 
 const Button = ({
     children,
@@ -20,65 +21,74 @@ const Button = ({
 
     // Base button classes
     const baseClasses = `
-    font-oswald
-    rounded-xl font-medium transition-all duration-300
-    focus:outline-none focus:ring-2 focus:ring-offset-2
-    disabled:opacity-70 disabled:cursor-not-allowed
-    flex items-center justify-center
-    relative overflow-hidden
-    transform hover:scale-[1.02] active:scale-[0.98]
-    shadow-sm hover:shadow-md
-  `;
+        font-oswald
+        rounded-xl font-medium transition-all duration-300
+        focus:outline-none focus:ring-2 focus:ring-offset-2
+        disabled:opacity-70 disabled:cursor-not-allowed
+        flex items-center justify-center
+        relative overflow-hidden
+        transform hover:scale-[1.02] active:scale-[0.98]
+        shadow-sm hover:shadow-md
+    `;
 
     // Variant classes
     const variantClasses = {
         primary: `
-      bg-gradient-to-r from-indigo-600 to-indigo-500 text-white
-      hover:from-indigo-700 hover:to-indigo-600
-      focus:ring-indigo-500
-      shadow-indigo-200
-    `,
+            bg-gradient-to-r from-indigo-600 to-indigo-500 text-white
+            hover:from-indigo-700 hover:to-indigo-600
+            focus:ring-indigo-500
+            shadow-indigo-200
+        `,
         secondary: `
-       text-white border-2 border-indigo-200
-      hover:bg-indigo-600 hover:border-indigo-600
-      focus:ring-indigo-300
-    `,
+            text-white border-2 border-indigo-200
+            hover:bg-indigo-600 hover:border-indigo-600
+            focus:ring-indigo-300
+        `,
         ghost: `
-      text-indigo-600 hover:bg-indigo-50
-      focus:ring-indigo-300
-    `,
+            text-indigo-600 hover:bg-indigo-50
+            focus:ring-indigo-300
+        `,
         danger: `
-      bg-gradient-to-r from-red-600 to-red-500 text-white
-      hover:from-red-700 hover:to-red-600
-      focus:ring-red-300
-    `,
+            bg-gradient-to-r from-red-600 to-red-500 text-white
+            hover:from-red-700 hover:to-red-600
+            focus:ring-red-300
+        `,
         outline: `
-    text-indigo-600 border-2 border-indigo-600
-    hover:bg-indigo-600 hover:text-white
-    mb-0
-  `
+            text-indigo-600 border-2 border-indigo-600
+            hover:bg-indigo-600 hover:text-white
+            mb-0
+        `
     };
 
     // Size classes
     const sizeClasses = {
-        small: 'px-4 py-1 text-sm',
+        small: 'px-4 py-1 text-base',
         medium: 'px-6 py-2 text-base',
         large: 'px-8 py-3 text-lg'
     };
 
     // Combine all classes
     const combinedClasses = `
-    ${baseClasses}
-    ${variantClasses[variant]}
-    ${sizeClasses[size]}
-    ${className}
-    ${loading ? 'cursor-wait' : ''}
-  `;
+        ${baseClasses}
+        ${variantClasses[variant]}
+        ${sizeClasses[size]}
+        ${className}
+        ${loading ? 'cursor-wait' : ''}
+    `;
 
     // Click handler
     const handleClick = (e) => {
         if (onClick) onClick(e);
     };
+
+    // Button content renderer
+    const renderButtonContent = () => (
+        <>
+            {iconPosition === 'left' && icon && <span className="mr-2">{icon}</span>}
+            {children}
+            {iconPosition === 'right' && icon && <span className="ml-2">{icon}</span>}
+        </>
+    );
 
     // Outlet button handler
     if (isOutlet) {
@@ -92,10 +102,22 @@ const Button = ({
                     navigate(to, outletProps);
                 }}
             >
-                {iconPosition === 'left' && icon && <span className="mr-2">{icon}</span>}
-                {children}
-                {iconPosition === 'right' && icon && <span className="ml-2">{icon}</span>}
+                {renderButtonContent()}
             </Link>
+        );
+    }
+
+    // Hash link button (when URL contains #)
+    if (to && typeof to === 'string' && to.includes('#')) {
+        return (
+            <HashLink
+                to={to}
+                smooth
+                className={`${combinedClasses} inline-flex`}
+                {...props}
+            >
+                {renderButtonContent()}
+            </HashLink>
         );
     }
 
@@ -107,9 +129,7 @@ const Button = ({
                 className={`${combinedClasses} inline-flex`}
                 {...props}
             >
-                {iconPosition === 'left' && icon && <span className="mr-2">{icon}</span>}
-                {children}
-                {iconPosition === 'right' && icon && <span className="ml-2">{icon}</span>}
+                {renderButtonContent()}
             </Link>
         );
     }
@@ -134,13 +154,10 @@ const Button = ({
 
             {/* Button content */}
             <span className={`flex items-center ${loading ? 'opacity-0' : 'opacity-100'}`}>
-                {iconPosition === 'left' && icon && <span className="mr-2">{icon}</span>}
-                {children}
-                {iconPosition === 'right' && icon && <span className="ml-2">{icon}</span>}
+                {renderButtonContent()}
             </span>
         </button>
     );
 };
 
 export default Button;
-
